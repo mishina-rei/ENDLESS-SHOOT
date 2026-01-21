@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{E2D218D1-6EEF-4AC6-886C-AFC144B8D926}</ProjectGuid>
+    <RootNamespace>DX22Golf</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ENDLESS_SHOOT</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)library;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)library</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)library;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)library</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Archetype.h" />
+    <ClInclude Include="src\Audio.h" />
+    <ClInclude Include="src\BGMPlayer.h" />
+    <ClInclude Include="src\Bullet.h" />
+    <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\CameraSystem.h" />
+    <ClInclude Include="src\Clear.h" />
+    <ClInclude Include="src\Collider.h" />
+    <ClInclude Include="src\ColliderSystem.h" />
+    <ClInclude Include="src\CommandBuffer.h" />
+    <ClInclude Include="src\Component.h" />
+    <ClInclude Include="src\ComponentArray.h" />
+    <ClInclude Include="src\ComponentTypeID.h" />
+    <ClInclude Include="src\Defines.h" />
+    <ClInclude Include="src\DirectX.h" />
+    <ClInclude Include="src\EffekseerManager.h" />
+    <ClInclude Include="src\Enemy.h" />
+    <ClInclude Include="src\EnemyBullet.h" />
+    <ClInclude Include="src\EnemyGenerator.h" />
+    <ClInclude Include="src\EntityID.h" />
+    <ClInclude Include="src\EntityTag.h" />
+    <ClInclude Include="src\FlyingEnemy.h" />
+    <ClInclude Include="src\GameManager.h" />
+    <ClInclude Include="src\GameOver.h" />
+    <ClInclude Include="src\Geometory.h" />
+    <ClInclude Include="src\Gun.h" />
+    <ClInclude Include="src\IDGenerator.h" />
+    <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\Main.h" />
+    <ClInclude Include="src\MeshBuffer.h" />
+    <ClInclude Include="src\MeshRenderer.h" />
+    <ClInclude Include="src\Model.h" />
+    <ClInclude Include="src\NativeScript.h" />
+    <ClInclude Include="src\PhysicsSystem.h" />
+    <ClInclude Include="src\Player.h" />
+    <ClInclude Include="src\PlayerCamera.h" />
+    <ClInclude Include="src\PlayerManager.h" />
+    <ClInclude Include="src\Quaternion.h" />
+    <ClInclude Include="src\Random.h" />
+    <ClInclude Include="src\RenderSystem.h" />
+    <ClInclude Include="src\Rigidbody.h" />
+    <ClInclude Include="src\Scene.h" />
+    <ClInclude Include="src\SceneGame.h" />
+    <ClInclude Include="src\SceneManager.h" />
+    <ClInclude Include="src\SceneStage10.h" />
+    <ClInclude Include="src\SceneStage11.h" />
+    <ClInclude Include="src\SceneStage12.h" />
+    <ClInclude Include="src\SceneStage2.h" />
+    <ClInclude Include="src\SceneStage3.h" />
+    <ClInclude Include="src\SceneStage4.h" />
+    <ClInclude Include="src\SceneStage5.h" />
+    <ClInclude Include="src\SceneStage6.h" />
+    <ClInclude Include="src\SceneStage7.h" />
+    <ClInclude Include="src\SceneStage8.h" />
+    <ClInclude Include="src\SceneStage9.h" />
+    <ClInclude Include="src\SceneTitle.h" />
+    <ClInclude Include="src\SceneUpgrade.h" />
+    <ClInclude Include="src\Script.h" />
+    <ClInclude Include="src\ScriptSystem.h" />
+    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\ShaderList.h" />
+    <ClInclude Include="src\Shockwave.h" />
+    <ClInclude Include="src\ShootingEnemy.h" />
+    <ClInclude Include="src\Signature.h" />
+    <ClInclude Include="src\SparsePool.h" />
+    <ClInclude Include="src\Sprite.h" />
+    <ClInclude Include="src\SpriteRenderer.h" />
+    <ClInclude Include="src\StageGenerator.h" />
+    <ClInclude Include="src\TestScript.h" />
+    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\TitleScript.h" />
+    <ClInclude Include="src\Transform.h" />
+    <ClInclude Include="src\UpgradeScript.h" />
+    <ClInclude Include="src\Vector.h" />
+    <ClInclude Include="src\world.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Archetype.cpp" />
+    <ClCompile Include="src\Audio.cpp" />
+    <ClCompile Include="src\BGMPlayer.cpp" />
+    <ClCompile Include="src\Bullet.cpp" />
+    <ClCompile Include="src\CameraSystem.cpp" />
+    <ClCompile Include="src\Clear.cpp" />
+    <ClCompile Include="src\ColliderSystem.cpp" />
+    <ClCompile Include="src\CommandBuffer.cpp" />
+    <ClCompile Include="src\DirectX.cpp" />
+    <ClCompile Include="src\EffekseerManager.cpp" />
+    <ClCompile Include="src\Enemy.cpp" />
+    <ClCompile Include="src\EnemyBullet.cpp" />
+    <ClCompile Include="src\EnemyGenerator.cpp" />
+    <ClCompile Include="src\FlyingEnemy.cpp" />
+    <ClCompile Include="src\GameManager.cpp" />
+    <ClCompile Include="src\GameOver.cpp" />
+    <ClCompile Include="src\Geometory.cpp" />
+    <ClCompile Include="src\Gun.cpp" />
+    <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\MeshBuffer.cpp" />
+    <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\PhysicsSystem.cpp" />
+    <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\PlayerCamera.cpp" />
+    <ClCompile Include="src\PlayerManager.cpp" />
+    <ClCompile Include="src\Random.cpp" />
+    <ClCompile Include="src\RenderSystem.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
+    <ClCompile Include="src\SceneGame.cpp" />
+    <ClCompile Include="src\SceneManager.cpp" />
+    <ClCompile Include="src\SceneStage10.cpp" />
+    <ClCompile Include="src\SceneStage11.cpp" />
+    <ClCompile Include="src\SceneStage12.cpp" />
+    <ClCompile Include="src\SceneStage2.cpp" />
+    <ClCompile Include="src\SceneStage3.cpp" />
+    <ClCompile Include="src\SceneStage4.cpp" />
+    <ClCompile Include="src\SceneStage5.cpp" />
+    <ClCompile Include="src\SceneStage6.cpp" />
+    <ClCompile Include="src\SceneStage7.cpp" />
+    <ClCompile Include="src\SceneStage8.cpp" />
+    <ClCompile Include="src\SceneStage9.cpp" />
+    <ClCompile Include="src\SceneTitle.cpp" />
+    <ClCompile Include="src\SceneUpgrade.cpp" />
+    <ClCompile Include="src\ScriptSystem.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\ShaderList.cpp" />
+    <ClCompile Include="src\Shockwave.cpp" />
+    <ClCompile Include="src\ShootingEnemy.cpp" />
+    <ClCompile Include="src\Sprite.cpp" />
+    <ClCompile Include="src\StageGenerator.cpp" />
+    <ClCompile Include="src\Startup.cpp" />
+    <ClCompile Include="src\TestScript.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\TitleScript.cpp" />
+    <ClCompile Include="src\UpgradeScript.cpp" />
+    <ClCompile Include="src\world.cpp" />
+    <ClCompile Include="src\_geometory.cpp" />
+    <ClCompile Include="src\_model.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
