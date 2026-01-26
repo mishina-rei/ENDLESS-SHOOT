@@ -46,7 +46,6 @@ void Uninit()
 
 void Update()
 {
-	UpdateInput();
 	SceneManager::GetInstance().Update();
 	EffekseerManager::Update();
 

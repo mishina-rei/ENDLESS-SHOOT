@@ -1,4 +1,5 @@
 #include "ShaderList.h"
+#include "defines.h"
 
 
 VertexShader* ShaderList::m_pVS[VS_KIND_MAX];
@@ -256,7 +257,7 @@ float4 main(PS_IN pin) : SV_TARGET
 	return color;
 })EOT";
 	m_pPS[PS_LAMBERT] = new PixelShader();
-	m_pPS[PS_LAMBERT]->Compile(code);
+	m_pPS[PS_LAMBERT]->Load(SHADER(PS_Lambert));
 }
 void ShaderList::MakeSpecularPS()
 {
