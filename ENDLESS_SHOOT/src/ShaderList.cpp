@@ -17,10 +17,13 @@ void ShaderList::Init()
 {
 	MakeWorldVS();
 	MakeAnimeVS();
+	MakeShadowVS();
+	MakeShadowAnimeVS();
 	MakeLambertPS();
 	MakeSpecularPS();
 	MakeToonPS();
 	MakeFogPS();
+	MakeShadowPS();
 
 	DirectX::XMFLOAT4X4 mat[250];
 	for (int i = 0; i < 250; ++i)
@@ -81,6 +84,7 @@ void ShaderList::SetWVP(DirectX::XMFLOAT4X4* wvp)
 void ShaderList::SetBones(DirectX::XMFLOAT4X4* bones200)
 {
 	m_pVS[VS_ANIME]->WriteBuffer(1, bones200);
+	m_pVS[VS_SHADOW_ANIME]->WriteBuffer(1, bones200);
 }
 void ShaderList::SetMaterial(const Model::Material& material)
 {
@@ -125,6 +129,19 @@ void ShaderList::SetFog(DirectX::XMFLOAT4 color, float start, float range)
 	};
 	m_pPS[PS_FOG]->WriteBuffer(3, param);
 }
+void ShaderList::SetShadow(ID3D11ShaderResourceView* pShadowMap, DirectX::XMFLOAT4X4* pLightViewProj)
+{
+	// LambertVF[_[?ep?p[^n
+	if (m_pPS[PS_LAMBERT])
+	{
+		m_pPS[PS_LAMBERT]->SetTexture(1, pShadowMap);
+		m_pPS[PS_LAMBERT]->WriteBuffer(2, pLightViewProj);
+	}
+	if (m_pVS[VS_WORLD])
+	{
+		m_pVS[VS_WORLD]->WriteBuffer(1, pLightViewProj);
+	}
+}
 
 void ShaderList::MakeWorldVS()
 {
@@ -160,7 +177,7 @@ VS_OUT main(VS_IN vin) {
 	return vout;
 })EOT";
 	m_pVS[VS_WORLD] = new VertexShader();
-	m_pVS[VS_WORLD]->Compile(code);
+	m_pVS[VS_WORLD]->Load(SHADER(VS_World));
 }
 void ShaderList::MakeAnimeVS()
 {
@@ -211,6 +228,75 @@ VS_OUT main(VS_IN vin) {
 	m_pVS[VS_ANIME] = new VertexShader();
 	m_pVS[VS_ANIME]->Compile(code);
 }
+void ShaderList::MakeShadowVS()
+{
+	const char* code = R"EOT(
+struct VS_IN {
+	float3 pos : POSITION;
+	float3 normal : NORMAL0;
+	float2 uv : TEXCOORD0;
+	float4 color : COLOR0;
+};
+struct VS_OUT {
+	float4 pos : SV_POSITION;
+};
+cbuffer WVP : register(b0) {
+	float4x4 world;
+	float4x4 view;
+	float4x4 proj;
+};
+VS_OUT main(VS_IN vin) {
+	VS_OUT vout;
+	vout.pos = float4(vin.pos, 1.0f);
+	vout.pos = mul(vout.pos, world);
+	vout.pos = mul(vout.pos, view);
+	vout.pos = mul(vout.pos, proj);
+	return vout;
+})EOT";
+	m_pVS[VS_SHADOW] = new VertexShader();
+	
+	m_pVS[VS_SHADOW]->Load(SHADER(VS_Shadow));
+	m_pVS[VS_SHADOW]->Compile(code);
+}
+void ShaderList::MakeShadowAnimeVS()
+{
+	const char* code = R"EOT(
+struct VS_IN {
+	float3 pos : POSITION;
+	float3 normal : NORMAL0;
+	float2 uv : TEXCOORD0;
+	float4 color : COLOR0;
+	float4 weight : WEIGHT0;
+	uint4 index : INDEX0;
+};
+struct VS_OUT {
+	float4 pos : SV_POSITION;
+};
+cbuffer WVP : register(b0) {
+	float4x4 world;
+	float4x4 view;
+	float4x4 proj;
+};
+cbuffer Bone : register(b1) {
+	float4x4 bone[200];
+};
+VS_OUT main(VS_IN vin) {
+	VS_OUT vout;
+	float4x4 anime;
+	anime  = bone[vin.index.x] * vin.weight.x;
+	anime += bone[vin.index.y] * vin.weight.y;
+	anime += bone[vin.index.z] * vin.weight.z;
+	anime += bone[vin.index.w] * vin.weight.w;
+	vout.pos = float4(vin.pos, 1.0f);
+	vout.pos = mul(vout.pos, anime);
+	vout.pos = mul(vout.pos, world);
+	vout.pos = mul(vout.pos, view);
+	vout.pos = mul(vout.pos, proj);
+	return vout;
+})EOT";
+	m_pVS[VS_SHADOW_ANIME] = new VertexShader();
+	m_pVS[VS_SHADOW_ANIME]->Compile(code);
+}
 void ShaderList::MakeLambertPS()
 {
 	const char* code = R"EOT(
@@ -244,15 +330,15 @@ float4 main(PS_IN pin) : SV_TARGET
 	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
 	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
 	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
-	// 本来のLambert拡散反射（思った表現が出来なかったので採用せず
+	// ?{????Lambert?g?U????i?v?????\?????o?????????????p????
 	// color.rgb *= saturate(diffuse * dotNL + ambient);
-	// 環境光で拡散反射部分の色が変わらないようにlerp(環境光,diffuse,dotNL)で計算
-	// 環境光が弱ければ黒(乗算)、強ければ白(加算)となるように、各計算を線形で補間
+	// ???????g?U?????????F??????????????lerp(?????,diffuse,dotNL)??v?Z
+	// ????????ク?????(???Z)?A???????Δ?(???Z)????????A?e?v?Z?????`?????
 	diffuse *= color.rgb;
 	color.rgb = saturate(lerp(
 		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
 		diffuse, dotNL));
-	// 本来なら必要ない鏡面反射、Lambert向けに若干だけ適用
+	// ?{??????K?v??????????ALambert????????????K?p
 	color.rgb += specular * pow(saturate(dotNL), max(0.01f, objSpecular.a) * 0.5f) * 0.5f;
 	return color;
 })EOT";
@@ -300,7 +386,7 @@ float4 main(PS_IN pin) : SV_TARGET
 	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
 	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
 	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
-	// Lambertの計算を参考
+	// Lambert??v?Z???Q?l
 	color.rgb *= saturate(lerp(
 		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
 		diffuse, dotNL));
@@ -339,12 +425,12 @@ float4 main(PS_IN pin) : SV_TARGET
 		color = tex.Sample(samp, pin.uv);
 	float3 N = normalize(pin.normal);
 	float3 L = normalize(-lightDir);
-	float dotNL = dot(N, L); // マイナス込で計算
+	float dotNL = dot(N, L); // ?}?C?i?X????v?Z
 	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
 	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
 	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
-	float toonNL = saturate((dot(N, L) + 0.5f) / 1.5f * 100.0f); // 陰の境目を柔らかく
-	// Lambertの計算を参考
+	float toonNL = saturate((dot(N, L) + 0.5f) / 1.5f * 100.0f); // ?A???????_????
+	// Lambert??v?Z???Q?l
 	color.rgb *= saturate(lerp(
 		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
 		diffuse, toonNL));
@@ -406,4 +492,14 @@ float4 main(PS_IN pin) : SV_TARGET
 })EOT";
 	m_pPS[PS_FOG] = new PixelShader();
 	m_pPS[PS_FOG]->Compile(code);
+}
+void ShaderList::MakeShadowPS()
+{
+	const char* code = R"EOT(
+float4 main() : SV_TARGET
+{
+	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+})EOT";
+	m_pPS[PS_SHADOW] = new PixelShader();
+	m_pPS[PS_SHADOW]->Load(SHADER(PS_Shadow));
 }

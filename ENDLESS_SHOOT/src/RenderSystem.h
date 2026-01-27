@@ -4,7 +4,8 @@
 #include <DirectXMath.h>
 
 #include <d3d11.h>
-#include <wrl/client.h> // ComPtr用
+#include <wrl/client.h> // ComPtr?p
+
 
 using namespace Microsoft::WRL;
 
@@ -13,16 +14,17 @@ class RenderSystem
 public:
 
 	static HRESULT Init();
-	// 描画実行
-	// view, proj: カメラのビュー・プロジェクション行列
+	// ?`?????s
+	// view, proj: ?J??????r???[?E?v???W?F?N?V?????s??
 	static void Draw(ECS::World* world);
 
 private:
 
-	static ComPtr<ID3D11Texture2D> m_pShadowMapTexture;       // シャドウマップ用テクスチャ本体
-	static ComPtr<ID3D11DepthStencilView> m_pShadowMapDSV;    // 書き込み用
-	static ComPtr<ID3D11ShaderResourceView> m_pShadowMapSRV;  // 読み取り用
-	static D3D11_VIEWPORT m_ShadowViewport;                   // シャドウマップ用のビューポート
+	static ComPtr<ID3D11Texture2D> m_pShadowMapTexture;       // ?V???h?E?}?b?v?p?e?N?X?`???{??
+	static ComPtr<ID3D11DepthStencilView> m_pShadowMapDSV;    // ????????p
+	static ComPtr<ID3D11ShaderResourceView> m_pShadowMapSRV;  // ???????p
+	static D3D11_VIEWPORT m_ShadowViewport;                   // ?V???h?E?}?b?v?p??r???[?|?[?g
+	static ComPtr<ID3D11Buffer> m_pShadowCB;                  // VhEpCB
 
 	static Camera light;
 };

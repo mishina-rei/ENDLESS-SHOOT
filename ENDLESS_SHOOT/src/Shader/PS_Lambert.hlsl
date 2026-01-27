@@ -3,6 +3,8 @@ struct PS_IN {
 	float3 normal : NORMAL0;
 	float2 uv : TEXCOORD0;
 	float4 color : COLOR0;
+    float4 wPos : TEXCOORD1; // 頂点シェーダーでワールド座標を計算して渡す
+    float4 lightSpacePos : TEXCOORD1; // ★ライト空間での座標
 };
 cbuffer Material : register(b0)
 {
@@ -15,8 +17,47 @@ cbuffer Light : register(b1)
 	float4 lightDiffuse;
 	float4 lightDir;
 };
+cbuffer Shadow : register(b2)
+{
+	float4x4 lightViewProj;
+};
 Texture2D tex : register(t0);
+Texture2D shadowMap : register(t1);
 SamplerState samp : register(s0);
+
+// 影判定関数
+float CalculateShadow(float4 lightSpacePos)
+{
+    // 1. 透視投影の割り算 (w除算)
+    // 範囲が [-1, 1] になる
+    float3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+
+    // 2. UV座標系 [0, 1] に変換
+    // (-1 -> 0, 1 -> 1) になるように補正
+    projCoords.x = projCoords.x * 0.5 + 0.5;
+    projCoords.y = -projCoords.y * 0.5 + 0.5; // DirectXはテクスチャ座標のYが下向きなので反転
+
+    // 範囲外（ライトの後ろや範囲外）は影にしない
+    if (projCoords.z > 1.0 || projCoords.z < 0.0)
+        return 1.0;
+
+    // 3. シャドウマップから「一番手前にある深度」を取得
+    float closestDepth = shadowMap.Sample(samp, projCoords.xy).r;
+
+    // 4. 今描画しようとしているピクセルの深度
+    float currentDepth = projCoords.z;
+
+    // 5. シャドウバイアス
+    // これがないと「シャドウアクネ（縞模様）」が出る
+    float bias = 0.005;
+
+    // 6. 判定: 記録された深度より奥にあれば「影」
+    // (1.0 = 明るい, 0.0 = 影)
+    float shadow = (currentDepth - bias) > closestDepth ? 0.0 : 1.0;
+
+    return shadow;
+}
+
 float4 main(PS_IN pin) : SV_TARGET
 {
 	float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -39,5 +80,12 @@ float4 main(PS_IN pin) : SV_TARGET
 		diffuse, dotNL));
 	// 本来なら必要ない鏡面反射、Lambert向けに若干だけ適用
 	color.rgb += specular * pow(saturate(dotNL), max(0.01f, objSpecular.a) * 0.5f) * 0.5f;
+	
+	// 影の適用
+    float shadowFactor = CalculateShadow(pin.lightSpacePos);
+
+    // 影になっている部分は環境光(Ambient)だけにする、などの処理
+    color.rgb = color.rgb * shadowFactor * lightDiffuse.rgb;
+
 	return color;
 }
