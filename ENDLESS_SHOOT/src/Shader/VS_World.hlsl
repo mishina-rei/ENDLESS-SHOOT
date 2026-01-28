@@ -12,7 +12,7 @@ struct VS_OUT
     float2 uv : TEXCOORD0;
     float4 color : COLOR0;
     float4 wPos : POSITION0;
-    float4 lightSpacePos : TEXCOORD1; // ★ライト空間での座標
+    float4 lightSpacePos : POSITION1; // ★ライト空間での座標
 };
 cbuffer WVP : register(b0)
 {
@@ -22,7 +22,8 @@ cbuffer WVP : register(b0)
 };
 cbuffer LightBuffer : register(b1)
 {
-    matrix LightViewProjection;
+    float4x4 LightView;
+    float4x4 LightProjection;
 };
 VS_OUT main(VS_IN vin)
 {
@@ -36,6 +37,7 @@ VS_OUT main(VS_IN vin)
     vout.uv = vin.uv;
     vout.color = vin.color;
     //現在の頂点が「ライトから見たらどこにあるか」を計算
-    vout.lightSpacePos = mul(vout.wPos, LightViewProjection);
+    vout.lightSpacePos = mul(vout.wPos, LightView);
+    vout.lightSpacePos = mul(vout.lightSpacePos, LightProjection);
     return vout;
 }

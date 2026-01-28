@@ -93,7 +93,10 @@ void Shader::SetTexture(UINT slot, Texture* tex)
 }
 void Shader::SetTexture(UINT slot, ID3D11ShaderResourceView* pSRV)
 {
-	if (slot >= m_pTextures.size()) { return; }
+	// ’Ç‰Á: ‘«‚è‚È‚¯‚ê‚ÎŠg’£‚·‚é
+	if (slot >= m_pTextures.size()) {
+		m_pTextures.resize(slot + 1, nullptr);
+	}
 
 	m_pTextures[slot] = pSRV;
 	switch (m_kind)

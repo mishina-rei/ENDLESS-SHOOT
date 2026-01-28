@@ -129,7 +129,7 @@ void ShaderList::SetFog(DirectX::XMFLOAT4 color, float start, float range)
 	};
 	m_pPS[PS_FOG]->WriteBuffer(3, param);
 }
-void ShaderList::SetShadow(ID3D11ShaderResourceView* pShadowMap, DirectX::XMFLOAT4X4* pLightViewProj)
+void ShaderList::SetShadow(ID3D11ShaderResourceView* pShadowMap, DirectX::XMFLOAT4X4* pLightBuffer)
 {
 	// LambertVF[_[?ep?p[^n
 	if (m_pPS[PS_LAMBERT])
@@ -138,7 +138,11 @@ void ShaderList::SetShadow(ID3D11ShaderResourceView* pShadowMap, DirectX::XMFLOA
 	}
 	if (m_pVS[VS_WORLD])
 	{
-		m_pVS[VS_WORLD]->WriteBuffer(1, pLightViewProj);
+		m_pVS[VS_WORLD]->WriteBuffer(1, pLightBuffer);
+	}
+	if (m_pVS[VS_ANIME])
+	{
+		m_pVS[VS_ANIME]->WriteBuffer(2, pLightBuffer);
 	}
 }
 
@@ -195,15 +199,21 @@ struct VS_OUT {
 	float2 uv : TEXCOORD0;
 	float4 color : COLOR0;
 	float4 wPos : POSITION0;
+	float4 lightSpacePos : POSITION1; // 追加
 };
 cbuffer WVP : register(b0) {
 	float4x4 world;
 	float4x4 view;
 	float4x4 proj;
 };
-cbuffer Bone : register(b1) {
+cbuffer Bone : register(b1) { // b1はボーンで使用
 	float4x4 bone[200];
 };
+cbuffer LightBuffer : register(b2) { 
+	float4x4 LightView;
+	float4x4 LightProjection;
+};
+
 VS_OUT main(VS_IN vin) {
 	VS_OUT vout;
 	float4x4 anime;
@@ -211,17 +221,26 @@ VS_OUT main(VS_IN vin) {
 	anime += bone[vin.index.y] * vin.weight.y;
 	anime += bone[vin.index.z] * vin.weight.z;
 	anime += bone[vin.index.w] * vin.weight.w;
+	
 	vout.pos = float4(vin.pos, 1.0f);
 	vout.pos = mul(vout.pos, anime);
 	vout.pos = mul(vout.pos, world);
 	vout.wPos = vout.pos;
+	
 	vout.pos = mul(vout.pos, view);
 	vout.pos = mul(vout.pos, proj);
+	
 	vout.normal = vin.normal;
 	vout.normal = mul(vout.normal, (float3x3)anime);
 	vout.normal = mul(vout.normal, (float3x3)world);
+	
 	vout.uv = vin.uv;
 	vout.color = vin.color;
+	
+	// ライト空間座標の計算
+	vout.lightSpacePos = mul(vout.wPos, LightView);
+	vout.lightSpacePos = mul(vout.lightSpacePos, LightProjection);
+	
 	return vout;
 })EOT";
 	m_pVS[VS_ANIME] = new VertexShader();

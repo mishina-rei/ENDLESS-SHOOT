@@ -28,7 +28,7 @@ HRESULT Init(HWND hWnd, UINT width, UINT height)
 	ShaderList::Init();
 	InitAudio();
 	EffekseerManager::Init();
-	RenderSystem::Init();
+	auto u = RenderSystem::Init();
 	SceneManager::GetInstance().Init<SceneTitle>();
 
 	return hr;

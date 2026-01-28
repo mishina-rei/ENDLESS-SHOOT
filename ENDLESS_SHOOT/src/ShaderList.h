@@ -46,7 +46,7 @@ public:
 	static void SetLight(DirectX::XMFLOAT4 color, DirectX::XMFLOAT3 dir);
 	static void SetCameraPos(const DirectX::XMFLOAT3 pos);
 	static void SetFog(DirectX::XMFLOAT4 color, float start, float range);
-	static void SetShadow(ID3D11ShaderResourceView* pShadowMap, DirectX::XMFLOAT4X4* pLightViewProj);
+	static void SetShadow(ID3D11ShaderResourceView* pShadowMap, DirectX::XMFLOAT4X4* pLightBuffer);
 	
 private:
 	static void MakeWorldVS();

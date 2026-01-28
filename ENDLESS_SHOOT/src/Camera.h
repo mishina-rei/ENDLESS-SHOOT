@@ -45,7 +45,9 @@ struct Camera
 	DirectX::XMFLOAT4X4 GetViewMatrixLookAt(const Vector3& position, const Vector3& target, const Vector3& up = Vector3(0.0f, 1.0f, 0.0f)) const
 	{
 		DirectX::XMFLOAT4X4 mat;
-		DirectX::XMStoreFloat4x4(&mat, DirectX::XMMatrixLookAtLH(position, target, up));
+		DirectX::XMStoreFloat4x4(&mat, DirectX::XMMatrixTranspose(
+			DirectX::XMMatrixLookAtLH(position, target, up)
+		));
 		return mat;
 	}
 };
