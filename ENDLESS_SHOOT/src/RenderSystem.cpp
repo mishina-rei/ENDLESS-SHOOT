@@ -27,7 +27,8 @@ Camera RenderSystem::light;
 HRESULT RenderSystem::Init()
 {
 	light.fov = 120.0f;
-	light.farClip = 80.0f;
+	light.farClip = 25.0f;
+	light.nearClip = 10.0f;
 	light.aspect = 1.0f;
 
 	HRESULT hr = S_OK;
@@ -156,10 +157,10 @@ void RenderSystem::Draw(ECS::World* world)
 
 	// 2. プロジェクション行列 (PerspectiveFovLH)
 	DirectX::XMMATRIX matLightProj = DirectX::XMMatrixPerspectiveFovLH(
-		DirectX::XMConvertToRadians(120.0f), // FOV
+		DirectX::XMConvertToRadians(light.fov), // FOV
 		1.0f,                                // アスペクト比
-		0.1f,                                // Near
-		80.0f                                // Far
+		light.nearClip,                                // Near
+		light.farClip                                // Far
 	);
 
 	// 3. シェーダー用に転置 (Transpose) した変数を用意する
