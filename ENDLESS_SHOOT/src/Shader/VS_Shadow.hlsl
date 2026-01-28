@@ -1,12 +1,15 @@
-cbuffer LightBuffer : register(b0)
+cbuffer WVP : register(b0)
 {
-    matrix LightViewProjection; // ライトの View * Projection
     matrix World;
+    matrix View;
+    matrix Proj;
 };
 
-float4 main(float4 pos : POSITION) : SV_POSITION
+float4 main(float3 pos : POSITION) : SV_POSITION
 {
-    // モデルを「ライトから見た空間」へ変換
-    float4 worldPos = mul(pos, World);
-    return mul(worldPos, LightViewProjection);
+    float4 p = float4(pos, 1.0f);
+    p = mul(p, World);
+    p = mul(p, View);
+    p = mul(p, Proj);
+    return p;
 }

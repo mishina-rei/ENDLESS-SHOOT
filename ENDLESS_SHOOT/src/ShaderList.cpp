@@ -135,7 +135,6 @@ void ShaderList::SetShadow(ID3D11ShaderResourceView* pShadowMap, DirectX::XMFLOA
 	if (m_pPS[PS_LAMBERT])
 	{
 		m_pPS[PS_LAMBERT]->SetTexture(1, pShadowMap);
-		m_pPS[PS_LAMBERT]->WriteBuffer(2, pLightViewProj);
 	}
 	if (m_pVS[VS_WORLD])
 	{
@@ -256,7 +255,6 @@ VS_OUT main(VS_IN vin) {
 	m_pVS[VS_SHADOW] = new VertexShader();
 	
 	m_pVS[VS_SHADOW]->Load(SHADER(VS_Shadow));
-	m_pVS[VS_SHADOW]->Compile(code);
 }
 void ShaderList::MakeShadowAnimeVS()
 {

@@ -11,40 +11,43 @@
 #include <algorithm>
 #include "DirectX.h"
 
-// ?V???h?E?}?b?v???x
+// シャドウマップ解像度
 const int SHADOW_MAP_WIDTH = 2048;
 const int SHADOW_MAP_HEIGHT = 2048;
 
-// static ?????o????????????`?i?????????m??j?????
+// static メンバ変数の実体定義
 Microsoft::WRL::ComPtr<ID3D11Texture2D>          RenderSystem::m_pShadowMapTexture;
 Microsoft::WRL::ComPtr<ID3D11DepthStencilView>   RenderSystem::m_pShadowMapDSV;
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderSystem::m_pShadowMapSRV;
-D3D11_VIEWPORT                                   RenderSystem::m_ShadowViewport = {}; // {} ??0?????????????????S???
+D3D11_VIEWPORT                                   RenderSystem::m_ShadowViewport = {}; // {} で0初期化
 Microsoft::WRL::ComPtr<ID3D11Buffer>             RenderSystem::m_pShadowCB;
+static Microsoft::WRL::ComPtr<ID3D11SamplerState> m_pShadowSampler; // サンプラーを保持
 Camera RenderSystem::light;
 
 HRESULT RenderSystem::Init()
 {
-	light.farClip = 100.0f;
+	light.fov = 120.0f;
+	light.farClip = 80.0f;
+	light.aspect = 1.0f;
 
 	HRESULT hr = S_OK;
 
 	ID3D11Device* pDevice = GetDevice();
 
 	// --------------------------------------------------
-	// 1. ?e?N?X?`?????\?[?X???
+	// 1. テクスチャリソース作成
 	// --------------------------------------------------
 	D3D11_TEXTURE2D_DESC texDesc = {};
 	texDesc.Width = SHADOW_MAP_WIDTH;
 	texDesc.Height = SHADOW_MAP_HEIGHT;
 	texDesc.MipLevels = 1;
 	texDesc.ArraySize = 1;
-	// ???d?v: R24G8_TYPELESS ???w?? (?[?x24bit + ?X?e???V??8bit ?????????)
+	// R24G8_TYPELESS を指定 (深度24bit + ステンシル8bit として扱うため)
 	texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 	texDesc.SampleDesc.Count = 1;
 	texDesc.SampleDesc.Quality = 0;
 	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	// ???d?v: ?[?x?o?b?t?@???????A?V?F?[?_?[???\?[?X???????g???t???O
+	// 深度バッファとして、またシェーダーリソースとして使うフラグ
 	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = 0;
@@ -53,12 +56,12 @@ HRESULT RenderSystem::Init()
 	if (FAILED(hr)) return hr;
 
 	// --------------------------------------------------
-	// 2. Depth Stencil View (DSV) ???
-	//    -> ?????[?x??????????????View
+	// 2. Depth Stencil View (DSV) 作成
+	//    -> 深度バッファとして使うためのView
 	// --------------------------------------------------
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
 	dsvDesc.Flags = 0;
-	// ??????[?x?t?H?[?}?b?g?????????????
+	// 深度フォーマットを指定（ステンシル含む）
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Texture2D.MipSlice = 0;
@@ -67,11 +70,11 @@ HRESULT RenderSystem::Init()
 	if (FAILED(hr)) return hr;
 
 	// --------------------------------------------------
-	// 3. Shader Resource View (SRV) ???
-	//    -> ?V?F?[?_?[??e?N?X?`?????????????View
+	// 3. Shader Resource View (SRV) 作成
+	//    -> シェーダーでテクスチャとして使うためのView
 	// --------------------------------------------------
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	// R?`?????l??(24bit?[?x????)????F?????????????
+	// Rチャンネル(24bit深度部分)を赤色として読み込む
 	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
@@ -81,8 +84,8 @@ HRESULT RenderSystem::Init()
 	if (FAILED(hr)) return hr;
 
 	// --------------------------------------------------
-	// 4. ?r???[?|?[?g????
-	//    -> ?V???h?E?}?b?v??T?C?Y??????????p??Viewport???K?v
+	// 4. ビューポート設定
+	//    -> シャドウマップのサイズに合わせた専用Viewportが必要
 	// --------------------------------------------------
 	m_ShadowViewport.TopLeftX = 0.0f;
 	m_ShadowViewport.TopLeftY = 0.0f;
@@ -91,77 +94,102 @@ HRESULT RenderSystem::Init()
 	m_ShadowViewport.MinDepth = 0.0f;
 	m_ShadowViewport.MaxDepth = 1.0f;
 
-	// --------------------------------------------------
-	// 5. Shadow Constant Buffer ??
-	// --------------------------------------------------
+	// サンプラーステート作成
+	D3D11_SAMPLER_DESC comparisonSamplerDesc;
+	ZeroMemory(&comparisonSamplerDesc, sizeof(D3D11_SAMPLER_DESC));
+	comparisonSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	comparisonSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	comparisonSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	comparisonSamplerDesc.BorderColor[0] = 1.0f;
+	comparisonSamplerDesc.BorderColor[1] = 1.0f;
+	comparisonSamplerDesc.BorderColor[2] = 1.0f;
+	comparisonSamplerDesc.BorderColor[3] = 1.0f;
+	comparisonSamplerDesc.MinLOD = 0.f;
+	comparisonSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	comparisonSamplerDesc.MipLODBias = 0.f;
+	comparisonSamplerDesc.MaxAnisotropy = 0;
+	comparisonSamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	comparisonSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+
+	pDevice->CreateSamplerState(
+		&comparisonSamplerDesc,
+		m_pShadowSampler.GetAddressOf()
+	);
+
+	// シャドウ用定数バッファの作成
 	/*D3D11_BUFFER_DESC cbDesc = {};
-	cbDesc.ByteWidth = sizeof(ShadowConstantBuffer);
-	cbDesc.Usage = D3D11_USAGE_DYNAMIC;
+	cbDesc.ByteWidth = sizeof(DirectX::XMFLOAT4X4);
+	cbDesc.Usage = D3D11_USAGE_DEFAULT;
 	cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	hr = pDevice->CreateBuffer(&cbDesc, nullptr, m_pShadowCB.GetAddressOf());
-	if (FAILED(hr)) return hr;*/
+	cbDesc.CPUAccessFlags = 0;
+	cbDesc.MiscFlags = 0;
+	cbDesc.StructureByteStride = 0;
+	hr = pDevice->CreateBuffer(&cbDesc, nullptr, m_pShadowCB.GetAddressOf());*/
 
 	return S_OK;
 }
 
 void RenderSystem::Draw(ECS::World* world)
 {
-	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+	ID3D11ShaderResourceView* nullSRV[2] = { nullptr, nullptr };
 	GetContext()->PSSetShaderResources(
 		0,
-		1,
+		2,
 		nullSRV
 	);
-	// ?V???h?E?}?b?v??????????
-	// ?????_?[?^?[?Q?b?g?????????A?[?x?o?b?t?@?????Z?b?g???? (?F???????????????null)
+
+	float color = 0.0f;/*
+	GetContext()->ClearRenderTargetView(GetDefaultRTV()->GetView(), &color);*/
+	GetContext()->ClearDepthStencilView(m_pShadowMapDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	// シャドウマップへの描画開始
+	// レンダーターゲットは設定せず、深度バッファのみセットする (色は書き込まないためnull)
 	ID3D11RenderTargetView* nullRTV = nullptr;
 	GetContext()->OMSetRenderTargets(1, &nullRTV, m_pShadowMapDSV.Get());
 
-	// ?[?x?o?b?t?@???N???A
+	// 深度バッファをクリア
 	GetContext()->ClearDepthStencilView(m_pShadowMapDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	// ?r???[?|?[?g???V???h?E?}?b?v?T?C?Y???X
+	// ビューポートをシャドウマップサイズへ変更
 	GetContext()->RSSetViewports(1, &m_ShadowViewport);
 
-	DirectX::XMFLOAT4X4 lightView = light.GetViewMatrix(Vector3(0.0f, 10.0f, 0.0f), Quaternion(-90.0f, 0.0f, 0.0f));
+	DirectX::XMFLOAT4X4 lightView = light.GetViewMatrix(Vector3(0.0f, 20.0f, 0.0f), Quaternion(90.0f, 0.0f, 0.0f));
 	DirectX::XMFLOAT4X4 lightProj = light.GetProjectionMatrix();
 	DirectX::XMFLOAT4X4 lightViewProj = DirectX::XMFLOAT4X4{};
 	{
 		DirectX::XMMATRIX view = DirectX::XMLoadFloat4x4(&lightView);
 		DirectX::XMMATRIX proj = DirectX::XMLoadFloat4x4(&lightProj);
-		DirectX::XMMATRIX viewProj = DirectX::XMMatrixMultiply(view, proj);
+		DirectX::XMMATRIX viewProj = DirectX::XMMatrixMultiply(proj, view);
 		DirectX::XMStoreFloat4x4(&lightViewProj, viewProj);
 	}
 
-	// ?V?F?[?_?[?????o?b?t?@???u???C?g???_?v??????`??
+	// シェーダー定数バッファ（ライト視点）を設定して描画
 	world->ForEach<MeshRenderer, Transform>([&](ECS::EntityID id, MeshRenderer& mesh, Transform& transform) {
 		if (!mesh.isVisible || !mesh.pModel) return;
 
-		// ???[???h?s????v?Z
+		// ワールド行列計算
 		DirectX::XMMATRIX T = DirectX::XMMatrixTranslationFromVector(transform.position);
 		DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(transform.rotation);
 		DirectX::XMMATRIX S = DirectX::XMMatrixScalingFromVector(transform.scale);
 		DirectX::XMMATRIX matWorld = S * R * T;
 
-		// ?V?F?[?_?[???o?b?t?@?p??s???Z?b?g
+		// シェーダー定数バッファ用に行列セット
 		DirectX::XMFLOAT4X4 wvp[3];
 		DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(matWorld));
 		wvp[1] = lightView;
 		wvp[2] = lightProj;
 
-		// ?V?F?[?_?[????
+		// シェーダー設定
 		ShaderList::SetWVP(wvp);
 
 		//Model* pModel = mesh.pModel;
 
-		SetDepthTest(true);  // ?[?x?e?X?g?L????
+		//SetDepthTest(true);  // 深度テスト有効化
 
 		for (int i = 0; i < mesh.pModel->GetMeshNum(); ++i) {
-			//???f??????b?V?????晢
+			// モデル内のメッシュを描画
 			Model::Mesh Mesh = *(mesh.pModel->GetMesh(i));
 
-			// ?A?j???[?V?????p?{?[???s??????M
+			// アニメーション用ボーン行列を送信
 			if (Mesh.bones.size() > 0)
 			{
 				DirectX::XMFLOAT4X4 bones[200];
@@ -182,17 +210,24 @@ void RenderSystem::Draw(ECS::World* world)
 
 			ShaderList::GetPS(ShaderList::PS_SHADOW)->Bind();
 
-			//f?`
+			// 描画
 			Mesh.pMesh->Draw();
 		}
 	});
 	
-	// ?????`????????
-	// 1. ?o?b?N?o?b?t?@(????)????
+	// 通常描画開始
+	// 1. バックバッファ(画面)へ戻す
 	auto p = GetDefaultRTV()->GetView();
 	GetContext()->OMSetRenderTargets(1, &p, GetDefaultDSV()->GetView()); // ?????DSV
 
-	// ?r???[?|?[?g?????
+	GetContext()->ClearDepthStencilView(
+		GetDefaultDSV()->GetView(),
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+		1.0f,
+		0
+	);
+
+	// ビューポートを戻す
 	D3D11_VIEWPORT vp;
 	vp.TopLeftX = 0.0f;
 	vp.TopLeftY = 0.0f;
@@ -203,46 +238,44 @@ void RenderSystem::Draw(ECS::World* world)
 
 	GetContext()->RSSetViewports(1, &vp);
 
-	// 4. ?????????????V???h?E?}?b?v???e?N?X?`???????Z?b?g (t0 ???W?X?^)
+	// 作成したシャドウマップをテクスチャとしてセット
 	ShaderList::SetShadow(m_pShadowMapSRV.Get(), &lightViewProj);
+
+	// シャドウマップ用サンプラーをセット
+	GetContext()->PSSetSamplers(1, 1, m_pShadowSampler.GetAddressOf());
 
 	DirectX::XMFLOAT4X4 view = CameraSystem::GetView();
 	DirectX::XMFLOAT4X4 proj = CameraSystem::GetProjection();
 	
-	//--- 3D???f?? (MeshRenderer) ??`??
+	//--- 3Dモデル (MeshRenderer) の描画
 	world->ForEach<MeshRenderer, Transform>([&](ECS::EntityID id, MeshRenderer& mesh, Transform& transform) {
 		if (!mesh.isVisible || !mesh.pModel) return;
 
-		// ???[???h?s????v?Z
+		// ワールド行列計算
 		DirectX::XMMATRIX T = DirectX::XMMatrixTranslationFromVector(transform.position);
 		DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(transform.rotation);
 		DirectX::XMMATRIX S = DirectX::XMMatrixScalingFromVector(transform.scale);
 		DirectX::XMMATRIX matWorld = S * R * T;
 
-		// ?V?F?[?_?[???o?b?t?@?p??s???Z?b?g
+		// シェーダー定数バッファ用に行列セット
 		DirectX::XMFLOAT4X4 wvp[3];
 		DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(matWorld));
 		wvp[1] = view;
 		wvp[2] = proj;
 
-		// ?V?F?[?_?[????
+		// シェーダー設定
 		ShaderList::SetWVP(wvp);
 
-		//Model* pModel = mesh.pModel;
-
-		SetDepthTest(true);  // ?[?x?e?X?g?L????
+		SetDepthTest(true);  // 深度テスト有効化
 
 		for (int i = 0; i < mesh.pModel->GetMeshNum(); ++i) {
-			//???f??????b?V?????晢
+			// モデル内のメッシュを描画
 			Model::Mesh Mesh = *(mesh.pModel->GetMesh(i));
-			//???b?V??????蓖???????????}?e???A?????晢
+			// メッシュに割り当てられているマテリアルを取得
 			Model::Material	material = *mesh.pModel->GetMaterial(Mesh.materialID);
-			//?}?e???A??????W???????ASetMaterial??????????O???X 
-			//material.ambient.x = 0.85f; // x???(r)?????? 
-			//material.ambient.y = 0.85f; // y???(g)?????? 
-			//material.ambient.z = 0.85f; // z???(b)??????
+			// マテリアル情報を調整してからSetMaterialで送信する
 
-			// MeshRenderer??F??f
+			// MeshRendererの色反映
 			material.diffuse.x *= mesh.color.x;
 			material.diffuse.y *= mesh.color.y;
 			material.diffuse.z *= mesh.color.z;
@@ -252,10 +285,10 @@ void RenderSystem::Draw(ECS::World* world)
 			material.ambient.z *= mesh.color.z;
 			material.ambient.w *= mesh.color.w;
 
-			//?V?F?[?_?[??}?e???A???????
+			// シェーダーへマテリアル送信
 			ShaderList::SetMaterial(material);
 
-			// ?A?j???[?V?????p?{?[???s??????M
+			// アニメーション用ボーン行列を送信
 			if (Mesh.bones.size() > 0)
 			{
 				DirectX::XMFLOAT4X4 bones[200];
@@ -269,24 +302,24 @@ void RenderSystem::Draw(ECS::World* world)
 				ShaderList::SetBones(bones);
 			}
 
-			//???f????`??
+			// モデルを描画
 			mesh.pModel->Draw(i);
 		}
 	});
 
-	// ?G?t?F?N?g??`?? (3D???f??????A2D?X?v???C?g??O)
+	// エフェクトの描画 (3Dモデルの後、2Dスプライトの前)
 	EffekseerManager::Draw();
 
-	//--- 2D?X?v???C?g (SpriteRenderer) ??`??
-	// Sprite?N???X??r???[?E?v???W?F?N?V?????s???????
+	//--- 2Dスプライト (SpriteRenderer) の描画
+	// Spriteクラスにビュー・プロジェクション行列を設定
 	Sprite::SetView(view);
 	Sprite::SetProjection(proj);
 
 	world->ForEach<SpriteRenderer,Transform>([&](ECS::EntityID id, SpriteRenderer& sprite,Transform& transform) {
 		if (!sprite.isVisible || !sprite.pTexture || sprite.isUI) return;
 
-		// ???[???h?s????v?Z
-		// 3D?????z?u?????X?v???C?g??Transform??X?P?[?????g??
+		// ワールド行列計算
+		// 3D空間配置のスプライトはTransformのスケールを使う
 		DirectX::XMMATRIX T = DirectX::XMMatrixTranslationFromVector(transform.position);
 		DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(transform.rotation);
 		DirectX::XMMATRIX S = DirectX::XMMatrixScalingFromVector(transform.scale);
@@ -306,16 +339,16 @@ void RenderSystem::Draw(ECS::World* world)
 		Sprite::Draw();
 	});
 
-	//--- 2D?X?v???C?g(UI)???`??
-	// Sprite?N???X??r???[?E?v???W?F?N?V?????s???????
-	// UI?p??s???? (?????_)
+	//--- 2Dスプライト(UI)の描画
+	// Spriteクラスにビュー・プロジェクション行列を設定
+	// UI用の行列 (正射影)
 	DirectX::XMFLOAT4X4 uiView;
 	DirectX::XMStoreFloat4x4(&uiView, DirectX::XMMatrixTranspose(DirectX::XMMatrixIdentity()));
 	DirectX::XMFLOAT4X4 uiProj;
 	DirectX::XMStoreFloat4x4(&uiProj, DirectX::XMMatrixTranspose(DirectX::XMMatrixOrthographicOffCenterLH(
 		0.0f, (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f)));
 
-	// UI?p????
+	// UI用設定
 	Sprite::SetView(uiView);
 	Sprite::SetProjection(uiProj);
 	SetDepthTest(false);
@@ -339,13 +372,13 @@ void RenderSystem::Draw(ECS::World* world)
 		Transform& transform = *data.transform;
 
 		Vector3 scale = transform.scale;
-		scale.y *= -1.0f; // ?????_???W?n???????Y????]
+		scale.y *= -1.0f; // 左上原点座標系にするためY反転
 
 		Vector3 pos = transform.position;
-		pos.z = 0.0f; // UI??Z???W??0????
+		pos.z = 0.0f; // UIのZ座標は0固定
 		
-		// ???[???h?s????v?Z
-		// UI?p??X?v???C?g??sprite??transform??X?P?[?????g??
+		// ワールド行列計算
+		// UI用のスプライトはspriteとtransformのスケールを使う
 		DirectX::XMMATRIX T = DirectX::XMMatrixTranslationFromVector(pos);
 		DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(transform.rotation);
 		DirectX::XMMATRIX S = DirectX::XMMatrixScalingFromVector(scale);
@@ -365,7 +398,7 @@ void RenderSystem::Draw(ECS::World* world)
 		Sprite::Draw();
 	}
 
-	// ?`????????f?t?H???g????
+	// 描画設定をデフォルトに戻す
 	SetDepthTest(true);
 	SetCullingMode(D3D11_CULL_BACK);
 }

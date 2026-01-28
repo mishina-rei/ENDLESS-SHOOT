@@ -4,7 +4,7 @@
 #include <DirectXMath.h>
 
 #include <d3d11.h>
-#include <wrl/client.h> // ComPtr?p
+#include <wrl/client.h> // ComPtr用
 
 
 using namespace Microsoft::WRL;
@@ -14,17 +14,17 @@ class RenderSystem
 public:
 
 	static HRESULT Init();
-	// ?`?????s
-	// view, proj: ?J??????r???[?E?v???W?F?N?V?????s??
+	// 描画処理
+	// view, proj: カメラのビュー・プロジェクション行列
 	static void Draw(ECS::World* world);
 
 private:
 
-	static ComPtr<ID3D11Texture2D> m_pShadowMapTexture;       // ?V???h?E?}?b?v?p?e?N?X?`???{??
-	static ComPtr<ID3D11DepthStencilView> m_pShadowMapDSV;    // ????????p
-	static ComPtr<ID3D11ShaderResourceView> m_pShadowMapSRV;  // ???????p
-	static D3D11_VIEWPORT m_ShadowViewport;                   // ?V???h?E?}?b?v?p??r???[?|?[?g
-	static ComPtr<ID3D11Buffer> m_pShadowCB;                  // VhEpCB
+	static ComPtr<ID3D11Texture2D> m_pShadowMapTexture;       // シャドウマップ用テクスチャ本体
+	static ComPtr<ID3D11DepthStencilView> m_pShadowMapDSV;    // 深度バッファ用
+	static ComPtr<ID3D11ShaderResourceView> m_pShadowMapSRV;  // シェーダーリソース用
+	static D3D11_VIEWPORT m_ShadowViewport;                   // シャドウマップ用ビューポート
+	static ComPtr<ID3D11Buffer> m_pShadowCB;                  // シャドウ用定数バッファ
 
 	static Camera light;
 };

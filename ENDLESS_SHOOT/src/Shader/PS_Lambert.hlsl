@@ -3,8 +3,8 @@ struct PS_IN {
 	float3 normal : NORMAL0;
 	float2 uv : TEXCOORD0;
 	float4 color : COLOR0;
-    float4 wPos : TEXCOORD1; // 頂点シェーダーでワールド座標を計算して渡す
-    float4 lightSpacePos : TEXCOORD1; // ★ライト空間での座標
+    float4 wPos : POSITION0; // 頂点シェーダーでワールド座標を計算して渡す
+    float4 lightSpacePos : TEXCOORD1; // ライト空間での座標
 };
 cbuffer Material : register(b0)
 {
@@ -17,13 +17,10 @@ cbuffer Light : register(b1)
 	float4 lightDiffuse;
 	float4 lightDir;
 };
-cbuffer Shadow : register(b2)
-{
-	float4x4 lightViewProj;
-};
 Texture2D tex : register(t0);
 Texture2D shadowMap : register(t1);
 SamplerState samp : register(s0);
+SamplerState shadowSamp : register(s1); // シャドウマップ専用サンプラー (Point/Border/White)
 
 // 影判定関数
 float CalculateShadow(float4 lightSpacePos)
@@ -42,7 +39,7 @@ float CalculateShadow(float4 lightSpacePos)
         return 1.0;
 
     // 3. シャドウマップから「一番手前にある深度」を取得
-    float closestDepth = shadowMap.Sample(samp, projCoords.xy).r;
+    float closestDepth = shadowMap.Sample(shadowSamp, projCoords.xy).r;
 
     // 4. 今描画しようとしているピクセルの深度
     float currentDepth = projCoords.z;
@@ -63,6 +60,7 @@ float4 main(PS_IN pin) : SV_TARGET
 	float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	if(objAmbient.a >= 1.0f)
 		color = tex.Sample(samp, pin.uv);
+	float3 texColor = color.rgb; // 影の計算用にテクスチャカラーを保存
 	float3 N = normalize(pin.normal);
 	// lightDirはfloat4なので、xyz成分のみを取り出して正規化するのが安全
 	float3 L = normalize(-lightDir.xyz);
@@ -83,9 +81,8 @@ float4 main(PS_IN pin) : SV_TARGET
 	
 	// 影の適用
     float shadowFactor = CalculateShadow(pin.lightSpacePos);
-
-    // 影になっている部分は環境光(Ambient)だけにする、などの処理
-    color.rgb = color.rgb * shadowFactor * lightDiffuse.rgb;
+    // shadowFactorが0(影)なら環境光(ambient)のみ、1(光)なら元の計算結果を適用
+    color.rgb = lerp(ambient * texColor, color.rgb, shadowFactor);
 
 	return color;
 }
