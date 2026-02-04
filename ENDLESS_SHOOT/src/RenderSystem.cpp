@@ -26,7 +26,7 @@ Camera RenderSystem::light;
 
 HRESULT RenderSystem::Init()
 {
-	light.fov = 120.0f;
+	light.fov = 100.0f;
 	light.farClip = 25.0f;
 	light.nearClip = 10.0f;
 	light.aspect = 1.0f;
@@ -36,7 +36,7 @@ HRESULT RenderSystem::Init()
 	ID3D11Device* pDevice = GetDevice();
 
 	// --------------------------------------------------
-	// 1. テクスチャリソース作成
+	// テクスチャリソース作成
 	// --------------------------------------------------
 	D3D11_TEXTURE2D_DESC texDesc = {};
 	texDesc.Width = SHADOW_MAP_WIDTH;
@@ -57,7 +57,7 @@ HRESULT RenderSystem::Init()
 	if (FAILED(hr)) return hr;
 
 	// --------------------------------------------------
-	// 2. Depth Stencil View (DSV) 作成
+	// Depth Stencil View (DSV) 作成
 	//    -> 深度バッファとして使うためのView
 	// --------------------------------------------------
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
@@ -70,7 +70,7 @@ HRESULT RenderSystem::Init()
 	if (FAILED(hr)) return hr;
 
 	// --------------------------------------------------
-	// 3. Shader Resource View (SRV) 作成
+	// Shader Resource View (SRV) 作成
 	//    -> シェーダーでテクスチャとして使うためのView
 	// --------------------------------------------------
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -83,7 +83,7 @@ HRESULT RenderSystem::Init()
 	if (FAILED(hr)) return hr;
 
 	// --------------------------------------------------
-	// 4. ビューポート設定
+	// ビューポート設定
 	//    -> シャドウマップのサイズに合わせた専用Viewportが必要
 	// --------------------------------------------------
 	m_ShadowViewport.TopLeftX = 0.0f;
@@ -107,8 +107,8 @@ HRESULT RenderSystem::Init()
 	comparisonSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	comparisonSamplerDesc.MipLODBias = 0.f;
 	comparisonSamplerDesc.MaxAnisotropy = 0;
-	comparisonSamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	comparisonSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	comparisonSamplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+	comparisonSamplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
 
 	hr = pDevice->CreateSamplerState(
 		&comparisonSamplerDesc,

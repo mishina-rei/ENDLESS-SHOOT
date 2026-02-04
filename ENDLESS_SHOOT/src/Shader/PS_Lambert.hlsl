@@ -20,16 +20,16 @@ cbuffer Light : register(b1)
 Texture2D tex : register(t0);
 Texture2D shadowMap : register(t1);
 SamplerState samp : register(s0);
-SamplerState shadowSamp : register(s1); // シャドウマップ専用サンプラー (Point/Border/White)
+SamplerComparisonState shadowSamp : register(s1); // シャドウマップ専用サンプラー
 
 // 影判定関数
 float CalculateShadow(float4 lightSpacePos)
 {
-    // 1. 透視投影の割り算 (w除算)
+    // 透視投影の割り算
     // 範囲が [-1, 1] になる
     float3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
 
-    // 2. UV座標系 [0, 1] に変換
+    // UV座標系 [0, 1] に変換
     // (-1 -> 0, 1 -> 1) になるように補正
     projCoords.x = projCoords.x * 0.5 + 0.5;
     projCoords.y = -projCoords.y * 0.5 + 0.5; // DirectXはテクスチャ座標のYが下向きなので反転
@@ -37,22 +37,18 @@ float CalculateShadow(float4 lightSpacePos)
     // 範囲外（ライトの後ろや範囲外）は影にしない
     if (projCoords.z > 1.0 || projCoords.z < 0.0)
         return 1.0;
-
-    // 3. シャドウマップから「一番手前にある深度」を取得
-    float closestDepth = shadowMap.Sample(shadowSamp, projCoords.xy).r;
-
-    // 4. 今描画しようとしているピクセルの深度
+    
+    // 今描画しようとしているピクセルの深度
     float currentDepth = projCoords.z;
 
-    // 5. シャドウバイアス
-    // これがないと「シャドウアクネ（縞模様）」が出る
+    // シャドウバイアス
     float bias = 0.005;
 
-    // 6. 判定: 記録された深度より奥にあれば「影」
+    // 記録された深度より奥にあれば「影」
     // (1.0 = 明るい, 0.0 = 影)
-    float shadow = (currentDepth - bias) > closestDepth ? 0.0 : 1.0;
+    return shadowMap.SampleCmpLevelZero(shadowSamp, projCoords.xy, currentDepth - bias);
 
-    return shadow;
+    //return shadow;
 }
 
 float4 main(PS_IN pin) : SV_TARGET
@@ -86,12 +82,9 @@ float4 main(PS_IN pin) : SV_TARGET
     color.rgb = lerp(ambient * texColor, color.rgb, shadowFactor);
     
 	return color;
-	
- //   float3 projCoords = pin.lightSpacePos.xyz / pin.lightSpacePos.w;
- //   float2 uv = projCoords.xy * float2(0.5, -0.5) + 0.5;
-	
+    
 	//// さっきグラデーションだったUVを使って、シャドウマップの色(深度)を出してみる
  //   float depth = shadowMap.Sample(shadowSamp, uv).r;
 
- //   return float4(depth, depth, depth, 1.0f);
+    //return float4(shadowFactor, shadowFactor, shadowFactor, 1.0f);
 }
