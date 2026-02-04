@@ -47,8 +47,6 @@ float CalculateShadow(float4 lightSpacePos)
     // ‹L˜^‚³‚ê‚½[“x‚æ‚è‰œ‚É‚ ‚ê‚Îu‰ev
     // (1.0 = –¾‚é‚¢, 0.0 = ‰e)
     return shadowMap.SampleCmpLevelZero(shadowSamp, projCoords.xy, currentDepth - bias);
-
-    //return shadow;
 }
 
 float4 main(PS_IN pin) : SV_TARGET

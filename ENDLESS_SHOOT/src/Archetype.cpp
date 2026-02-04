@@ -12,17 +12,20 @@ std::pair<bool, ECS::EntityID> ECS::Archetype::RemoveEntity(size_t index)
     EntityID movedEntity = entities[lastIndex];
 
     // 全カラムで削除実行
-    for (auto& pair : columns) {
+    for (auto& pair : columns) 
+    {
         pair.second->RemoveSwap(index);
     }
 
     // IDリストの削除
-    if (index != lastIndex) {
+    if (index != lastIndex) 
+    {
         entities[index] = entities[lastIndex];
         entities.pop_back();
-        return { true, movedEntity }; // 末尾の人が移動してきた
+        return { true, movedEntity }; // 末尾が移動してきた
     }
-    else {
+    else 
+    {
         entities.pop_back();
         return { false, 0 }; // 末尾が消えただけ
     }

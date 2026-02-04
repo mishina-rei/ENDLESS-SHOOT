@@ -64,6 +64,18 @@
     <Filter Include="ヘッダー ファイル\Application\Enemy">
       <UniqueIdentifier>{46407a61-d5b9-4431-a1c8-782faa483a62}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Application\Logic">
+      <UniqueIdentifier>{45dcc531-8e2d-4c28-b9a3-0472443a183e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Framework\Core">
+      <UniqueIdentifier>{768dbdbb-d436-407c-8d77-fd79d61df684}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Application\Logic">
+      <UniqueIdentifier>{d6ec9c5b-ea21-4732-a436-c9853fe776b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Framework\Core">
+      <UniqueIdentifier>{a4f4f6f6-7d02-4619-a1ce-65ee0b9ea60c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Defines.h">
@@ -71,15 +83,6 @@
     </ClInclude>
     <ClInclude Include="src\DirectX.h">
       <Filter>ヘッダー ファイル\Framework\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Geometory.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Input.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Main.h">
-      <Filter>ヘッダー ファイル\Application</Filter>
     </ClInclude>
     <ClInclude Include="src\MeshBuffer.h">
       <Filter>ヘッダー ファイル\Framework\DirectX</Filter>
@@ -90,32 +93,8 @@
     <ClInclude Include="src\ShaderList.h">
       <Filter>ヘッダー ファイル\Framework\DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="src\Model.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
-    </ClInclude>
     <ClInclude Include="src\Texture.h">
       <Filter>ヘッダー ファイル\Framework\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Sprite.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Scene.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Quaternion.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Vector.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="src\IDGenerator.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SceneManager.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CommandBuffer.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
     </ClInclude>
     <ClInclude Include="src\SpriteRenderer.h">
       <Filter>ヘッダー ファイル\Framework\Component</Filter>
@@ -132,9 +111,6 @@
     <ClInclude Include="src\NativeScript.h">
       <Filter>ヘッダー ファイル\Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="src\TestScript.h">
-      <Filter>ヘッダー ファイル\Application</Filter>
-    </ClInclude>
     <ClInclude Include="src\Rigidbody.h">
       <Filter>ヘッダー ファイル\Framework\Component</Filter>
     </ClInclude>
@@ -146,9 +122,6 @@
     </ClInclude>
     <ClInclude Include="src\Camera.h">
       <Filter>ヘッダー ファイル\Framework\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Audio.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
     </ClInclude>
     <ClInclude Include="src\CameraSystem.h">
       <Filter>ヘッダー ファイル\Framework\System</Filter>
@@ -186,33 +159,6 @@
     <ClInclude Include="src\world.h">
       <Filter>ヘッダー ファイル\Framework\ECS</Filter>
     </ClInclude>
-    <ClInclude Include="src\EffekseerManager.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EntityTag.h">
-      <Filter>ヘッダー ファイル\Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TitleScript.h">
-      <Filter>ヘッダー ファイル\Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GameManager.h">
-      <Filter>ヘッダー ファイル\Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Random.h">
-      <Filter>ヘッダー ファイル\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GameOver.h">
-      <Filter>ヘッダー ファイル\Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Clear.h">
-      <Filter>ヘッダー ファイル\Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\StageGenerator.h">
-      <Filter>ヘッダー ファイル\Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\UpgradeScript.h">
-      <Filter>ヘッダー ファイル\Application</Filter>
-    </ClInclude>
     <ClInclude Include="src\SceneGame.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
@@ -239,9 +185,6 @@
     </ClInclude>
     <ClInclude Include="src\SceneStage2.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EnemyGenerator.h">
-      <Filter>ヘッダー ファイル\Application</Filter>
     </ClInclude>
     <ClInclude Include="src\SceneStage3.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
@@ -289,33 +232,81 @@
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\BGMPlayer.h">
-      <Filter>ヘッダー ファイル\Application</Filter>
+      <Filter>ヘッダー ファイル\Application\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Clear.h">
+      <Filter>ヘッダー ファイル\Application\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EnemyGenerator.h">
+      <Filter>ヘッダー ファイル\Application\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EntityTag.h">
+      <Filter>ヘッダー ファイル\Application\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameManager.h">
+      <Filter>ヘッダー ファイル\Application\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameOver.h">
+      <Filter>ヘッダー ファイル\Application\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Main.h">
+      <Filter>ヘッダー ファイル\Application\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StageGenerator.h">
+      <Filter>ヘッダー ファイル\Application\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TestScript.h">
+      <Filter>ヘッダー ファイル\Application\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TitleScript.h">
+      <Filter>ヘッダー ファイル\Application\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UpgradeScript.h">
+      <Filter>ヘッダー ファイル\Application\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Audio.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CommandBuffer.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EffekseerManager.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Geometory.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IDGenerator.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Quaternion.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Random.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneManager.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sprite.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Vector.h">
+      <Filter>ヘッダー ファイル\Framework\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Startup.cpp">
       <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\_geometory.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="src\_model.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Geometory.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Input.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Main.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Model.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Scene.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
     </ClCompile>
     <ClCompile Include="src\Shader.cpp">
       <Filter>ソース ファイル\Framework\DirectX</Filter>
@@ -331,21 +322,6 @@
     </ClCompile>
     <ClCompile Include="src\MeshBuffer.cpp">
       <Filter>ソース ファイル\Framework\DirectX</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Sprite.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SceneManager.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TestScript.cpp">
-      <Filter>ソース ファイル\Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CommandBuffer.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Audio.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
     </ClCompile>
     <ClCompile Include="src\CameraSystem.cpp">
       <Filter>ソース ファイル\Framework\System</Filter>
@@ -367,30 +343,6 @@
     </ClCompile>
     <ClCompile Include="src\Archetype.cpp">
       <Filter>ソース ファイル\Framework\ECS</Filter>
-    </ClCompile>
-    <ClCompile Include="src\EffekseerManager.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TitleScript.cpp">
-      <Filter>ソース ファイル\Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameManager.cpp">
-      <Filter>ソース ファイル\Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Random.cpp">
-      <Filter>ソース ファイル\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameOver.cpp">
-      <Filter>ソース ファイル\Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\StageGenerator.cpp">
-      <Filter>ソース ファイル\Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UpgradeScript.cpp">
-      <Filter>ソース ファイル\Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Clear.cpp">
-      <Filter>ソース ファイル\Application</Filter>
     </ClCompile>
     <ClCompile Include="src\SceneUpgrade.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
@@ -418,9 +370,6 @@
     </ClCompile>
     <ClCompile Include="src\SceneStage2.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="src\EnemyGenerator.cpp">
-      <Filter>ソース ファイル\Application</Filter>
     </ClCompile>
     <ClCompile Include="src\SceneStage3.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
@@ -468,7 +417,76 @@
       <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\BGMPlayer.cpp">
-      <Filter>ソース ファイル\Application</Filter>
+      <Filter>ソース ファイル\Application\Logic</Filter>
     </ClCompile>
+    <ClCompile Include="src\Clear.cpp">
+      <Filter>ソース ファイル\Application\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EnemyGenerator.cpp">
+      <Filter>ソース ファイル\Application\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameManager.cpp">
+      <Filter>ソース ファイル\Application\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameOver.cpp">
+      <Filter>ソース ファイル\Application\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StageGenerator.cpp">
+      <Filter>ソース ファイル\Application\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TestScript.cpp">
+      <Filter>ソース ファイル\Application\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TitleScript.cpp">
+      <Filter>ソース ファイル\Application\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UpgradeScript.cpp">
+      <Filter>ソース ファイル\Application\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_geometory.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_model.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Audio.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommandBuffer.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EffekseerManager.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Geometory.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Main.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Random.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneManager.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sprite.cpp">
+      <Filter>ソース ファイル\Framework\Core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="src\Shader\PS_Lambert.hlsl" />
+    <FxCompile Include="src\Shader\PS_Shadow.hlsl" />
+    <FxCompile Include="src\Shader\VS_Shadow.hlsl" />
+    <FxCompile Include="src\Shader\VS_World.hlsl" />
   </ItemGroup>
 </Project>
