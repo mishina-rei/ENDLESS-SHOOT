@@ -12,6 +12,7 @@
 #include "CameraSystem.h"
 #include "Audio.h"
 #include "EffekseerManager.h"
+#include "RenderSystem.h"
 
 HRESULT Init(HWND hWnd, UINT width, UINT height)
 {
@@ -27,6 +28,7 @@ HRESULT Init(HWND hWnd, UINT width, UINT height)
 	ShaderList::Init();
 	InitAudio();
 	EffekseerManager::Init();
+	auto u = RenderSystem::Init();
 	SceneManager::GetInstance().Init<SceneTitle>();
 
 	return hr;
@@ -46,7 +48,6 @@ void Uninit()
 
 void Update()
 {
-	UpdateInput();
 	SceneManager::GetInstance().Update();
 	EffekseerManager::Update();
 

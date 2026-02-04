@@ -5,7 +5,7 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
 //----------
-// 基本クラス
+// ???{?N???X
 Shader::Shader(Kind kind)
 	: m_kind(kind)
 {
@@ -23,26 +23,26 @@ HRESULT Shader::Load(const char* pFileName)
 {
 	HRESULT hr = E_FAIL;
 
-	// ファイルを読み込む
+	// ?t?@?C??????????
 	FILE* fp;
 	fopen_s(&fp, pFileName, "rb");
 	if (!fp) { return hr; }
 
-	// ファイルのサイズを調べる
+	// ?t?@?C????T?C?Y????
 	int fileSize = 0;
 	fseek(fp, 0, SEEK_END);
 	fileSize = ftell(fp);
 
-	// メモリに読み込み
+	// ?????????????
 	fseek(fp, 0, SEEK_SET);
 	char* pData = new char[fileSize];
 	fread(pData, fileSize, 1, fp);
 	fclose(fp);
 
-	// シェーダー作成
+	// ?V?F?[?_?[??
 	hr = Make(pData, fileSize);
 	
-	// 終了処理
+	// ?I??????
 	if (pData) { delete[] pData; }
 	return hr;
 }
@@ -62,7 +62,7 @@ HRESULT Shader::Compile(const char *pCode)
 		"main", pTargetList[m_kind], compileFlag, 0, &pBlob, &error);
 	if (FAILED(hr)) { return hr; }
 
-	// シェーダ作成
+	// ?V?F?[?_??
 	hr = Make(pBlob->GetBufferPointer(), (UINT)pBlob->GetBufferSize());
 	SAFE_RELEASE(pBlob);
 	SAFE_RELEASE(error);
@@ -91,46 +91,60 @@ void Shader::SetTexture(UINT slot, Texture* tex)
 	case Pixel:		GetContext()->PSSetShaderResources(slot, 1, &pTex); break;
 	}
 }
+void Shader::SetTexture(UINT slot, ID3D11ShaderResourceView* pSRV)
+{
+	// 追加: 足りなければ拡張する
+	if (slot >= m_pTextures.size()) {
+		m_pTextures.resize(slot + 1, nullptr);
+	}
+
+	m_pTextures[slot] = pSRV;
+	switch (m_kind)
+	{
+	case Vertex:	GetContext()->VSSetShaderResources(slot, 1, &pSRV); break;
+	case Pixel:		GetContext()->PSSetShaderResources(slot, 1, &pSRV); break;
+	}
+}
 
 HRESULT Shader::Make(void* pData, UINT size)
 {
 	HRESULT hr;
 	ID3D11Device* pDevice = GetDevice();
 
-	// 解析用のリフレクション作成
+	// ????p????t???N?V??????
 	ID3D11ShaderReflection* pReflection;
 	hr = D3DReflect(pData, size, IID_PPV_ARGS(&pReflection));
 	if (FAILED(hr)) { return hr; }
 
-	// 定数バッファ作成
+	// ???o?b?t?@??
 	D3D11_SHADER_DESC shaderDesc;
 	pReflection->GetDesc(&shaderDesc);
 	m_pBuffers.resize(shaderDesc.ConstantBuffers, nullptr);
 	for (UINT i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
-		// シェーダーの定数バッファの情報を取得
+		// ?V?F?[?_?[????o?b?t?@????????擾
 		D3D11_SHADER_BUFFER_DESC shaderBufDesc;
 		ID3D11ShaderReflectionConstantBuffer* cbuf = pReflection->GetConstantBufferByIndex(i);
 		cbuf->GetDesc(&shaderBufDesc);
 
-		// 作成するバッファの情報
+		// ???????o?b?t?@?????
 		D3D11_BUFFER_DESC bufDesc = {};
 		bufDesc.ByteWidth = shaderBufDesc.Size;
 		bufDesc.Usage = D3D11_USAGE_DEFAULT;
 		bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-		// バッファの作成
+		// ?o?b?t?@???
 		hr = pDevice->CreateBuffer(&bufDesc, nullptr, &m_pBuffers[i]);
 		if (FAILED(hr)) { return hr; }
 	}
-	// テクスチャ領域作成
+	// ?e?N?X?`???????
 	m_pTextures.resize(shaderDesc.TextureNormalInstructions, nullptr);
 
 	return MakeShader(pData, size);
 }
 
 //----------
-// 頂点シェーダ
+// ???_?V?F?[?_
 VertexShader::VertexShader()
 	: Shader(Shader::Vertex)
 	, m_pVS(nullptr)
@@ -160,14 +174,14 @@ HRESULT VertexShader::MakeShader(void* pData, UINT size)
 	HRESULT hr;
 	ID3D11Device* pDevice = GetDevice();
 	
-	// シェーダー作成
+	// ?V?F?[?_?[??
 	hr = pDevice->CreateVertexShader(pData, size, NULL, &m_pVS);
 	if(FAILED(hr)) { return hr; }
 
 	/*
-	シェーダ作成時にシェーダリフレクションを通してインプットレイアウトを取得
-	セマンティクスの配置などから識別子を作成
-	識別子が登録済→再利用、なければ新規作成
+	?V?F?[?_??????V?F?[?_???t???N?V???????????C???v?b?g???C?A?E?g???擾
+	?Z?}???e?B?N?X??z?u????????q????
+	????q???o?^?ρ?????p?A???????V?K??
 	https://blog.techlab-xe.net/dxc-shader-reflection/
 	*/
 
@@ -240,7 +254,7 @@ HRESULT VertexShader::MakeShader(void* pData, UINT size)
 }
 
 //----------
-// ピクセルシェーダ
+// ?s?N?Z???V?F?[?_
 PixelShader::PixelShader()
 	: Shader(Shader::Pixel)
 	, m_pPS(nullptr)

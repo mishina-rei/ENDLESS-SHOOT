@@ -10,13 +10,15 @@
 #include "SparsePool.h"
 #include "IDGenerator.h"
 
-namespace ECS {
+namespace ECS 
+{
 
     class World 
     {
     private:
 
-        struct EntityRecord {
+        struct EntityRecord 
+        {
             std::shared_ptr<Archetype> archetype;
             size_t index;
         };
@@ -59,7 +61,8 @@ namespace ECS {
 
         // コンポーネント追加
         template <typename T>
-        void AddComponent(EntityID id, T data) {
+        void AddComponent(EntityID id, T data) 
+        {
             ComponentTypeID typeId = ComponentRegistry::GetID<T>();
             // 構造的コンポーネントか？
             if (structuralTypes.count(typeId)) {
@@ -72,7 +75,8 @@ namespace ECS {
 
         // コンポーネント削除
         template <typename T>
-        void RemoveComponent(EntityID id) {
+        void RemoveComponent(EntityID id) 
+        {
             ComponentTypeID typeId = ComponentRegistry::GetID<T>();
 
             if (structuralTypes.count(typeId)) {
@@ -85,9 +89,11 @@ namespace ECS {
 
         // コンポーネントを持っているか確認
         template <typename T>
-        bool HasComponent(EntityID id) {
+        bool HasComponent(EntityID id) 
+        {
             ComponentTypeID typeId = ComponentRegistry::GetID<T>();
-            if (structuralTypes.count(typeId)) {
+            if (structuralTypes.count(typeId)) 
+            {
                 if (entityIndex.find(id) == entityIndex.end()) return false;
                 EntityRecord& r = entityIndex[id];
                 return r.archetype->columns.find(typeId) != r.archetype->columns.end();
@@ -102,10 +108,12 @@ namespace ECS {
 
         // コンポーネント取得
         template <typename T>
-        T& GetComponent(EntityID id) {
+        T& GetComponent(EntityID id) 
+        {
             ComponentTypeID typeId = ComponentRegistry::GetID<T>();
 
-            if (structuralTypes.count(typeId)) {
+            if (structuralTypes.count(typeId)) 
+            {
                 // アーキタイプから取得
                 EntityRecord& r = entityIndex[id];
                 auto col = std::static_pointer_cast<ComponentArray<T>>(r.archetype->columns[typeId]);
@@ -119,12 +127,15 @@ namespace ECS {
 
         // 複数のStructuralコンポーネントを持つエンティティを走査
         template <typename... Components, typename Func>
-        void ForEach(Func func) {
+        void ForEach(Func func) 
+        {
             std::vector<ComponentTypeID> typeIds = { ComponentRegistry::GetID<Components>()... };
 
-            for (auto& [sig, arch] : archetypeMap) {
+            for (auto& [sig, arch] : archetypeMap) 
+            {
                 bool hasAll = true;
-                for (auto id : typeIds) {
+                for (auto id : typeIds) 
+                {
                     if (arch->columns.find(id) == arch->columns.end()) {
                         hasAll = false;
                         break;
@@ -150,7 +161,8 @@ namespace ECS {
 
             if (structuralTypes.count(typeId)) {
                 // Structuralコンポーネントの場合
-                for (auto& [sig, arch] : archetypeMap) {
+                for (auto& [sig, arch] : archetypeMap) 
+                {
                     if (arch->columns.find(typeId) == arch->columns.end()) continue;
 
                     auto* compArray = static_cast<ComponentArray<T>*>(arch->columns[typeId].get());
@@ -173,7 +185,8 @@ namespace ECS {
 
         // アーキタイプに追加
         template <typename T>
-        void AddToArchetype(EntityID id, T data, ComponentTypeID typeId) {
+        void AddToArchetype(EntityID id, T data, ComponentTypeID typeId) 
+        {
             EntityRecord& record = entityIndex[id];
             auto oldArch = record.archetype;
 
@@ -203,7 +216,8 @@ namespace ECS {
 
         // アーキタイプから削除（構造的コンポーネントの削除）
         template <typename T>
-        void RemoveFromArchetype(EntityID id, ComponentTypeID typeId) {
+        void RemoveFromArchetype(EntityID id, ComponentTypeID typeId) 
+        {
             EntityRecord& record = entityIndex[id];
             auto oldArch = record.archetype;
 
@@ -228,7 +242,8 @@ namespace ECS {
         }
 
         template <typename T>
-        std::shared_ptr<SparsePool<T>> GetSparsePool(ComponentTypeID typeId) {
+        std::shared_ptr<SparsePool<T>> GetSparsePool(ComponentTypeID typeId) 
+        {
             if (sparsePools.find(typeId) == sparsePools.end()) {
                 sparsePools[typeId] = std::make_shared<SparsePool<T>>();
             }

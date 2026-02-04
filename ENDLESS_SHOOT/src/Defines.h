@@ -11,6 +11,11 @@ static const float fFPS = static_cast<float>(FPS);
 
 // リソースパス
 #define ASSET(path)	"Assets/"path
+#define SHADER(path)"Assets/Shader/"#path".cso"
+#define MODEL(path)"Assets/Model/"#path".fbx"
+#define SOUND(path)"Assets/Sound/"#path".wave"
+#define TEXTURE(path)"Assets/Texture/"#path".png"
+#define EFFECT(path)"Assets/Effect/"#path".efkefc"
 
 // 3D空間定義
 #define CMETER(value) (value * 0.01f)
@@ -20,7 +25,7 @@ static const float fFPS = static_cast<float>(FPS);
 static const float GRAVITY = 0.98f;
 
 // タイトル
-static const char* APP_TITLE = "DX22_Golf";
+static const char* APP_TITLE = "ENDLESS_SHOOT";
 
 // 画面サイズ
 static const int SCREEN_WIDTH	= 1280;

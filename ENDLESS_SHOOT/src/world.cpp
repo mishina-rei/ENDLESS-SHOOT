@@ -19,9 +19,8 @@ ECS::EntityID ECS::World::CreateEntity()
 void ECS::World::DeleteEntity(EntityID id)
 {
     // 存在確認
-    if (entityIndex.find(id) == entityIndex.end()) {
+    if (entityIndex.find(id) == entityIndex.end())
         return;
-    }
 
     EntityRecord& record = entityIndex[id];
     auto arch = record.archetype;
@@ -64,7 +63,8 @@ void ECS::World::MigrateEntity(EntityID id, EntityRecord& record, std::shared_pt
     size_t newIdx = newArch->AddEntity(id);
 
     // 各コンポーネントの移動
-    for (auto& pair : oldArch->columns) {
+    for (auto& pair : oldArch->columns) 
+    {
         ComponentTypeID type = pair.first;
 
         // 新しいアーキタイプに含まれないコンポーネントは移動しない

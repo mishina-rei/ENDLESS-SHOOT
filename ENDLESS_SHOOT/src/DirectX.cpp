@@ -256,7 +256,7 @@ void SetRenderTargets(UINT num, RenderTarget** ppViews, DepthStencil* pView)
 	vp.MaxDepth = 1.0f;
 	g_pContext->RSSetViewports(1, &vp);
 }
-
+	
 void SetCullingMode(D3D11_CULL_MODE cull)
 {
 	switch (cull)

@@ -7,12 +7,14 @@
 
 class ShaderList
 {
-	// 定義
+	// ???`
 public:
 	enum VSKind
 	{
 		VS_WORLD, // SetWVP
 		VS_ANIME, // SetWVP,SetBones
+		VS_SHADOW, // SetWVP
+		VS_SHADOW_ANIME, // SetWVP, SetBones
 		VS_KIND_MAX
 	};
 	enum PSKind
@@ -21,6 +23,7 @@ public:
 		PS_SPECULAR, //SetMaterial, SetLight, SetCameraPos
 		PS_TOON, // SetMaterial, SetLight
 		PS_FOG, // SetMaterial, SetLight,SetFog
+		PS_SHADOW,
 		PS_KIND_MAX
 	};
 
@@ -32,25 +35,29 @@ public:
 	static void Init();
 	static void Uninit();
 
-	// シェーダー設定
+	// ?V?F?[?_?[???
 	static VertexShader* GetVS(VSKind vs);
 	static PixelShader* GetPS(PSKind ps);
 
-	// 定数バッファへの設定
+	// ???o?b?t?@?????
 	static void SetWVP(DirectX::XMFLOAT4X4* wvp);
 	static void SetBones(DirectX::XMFLOAT4X4* bones200);
 	static void SetMaterial(const Model::Material& material);
 	static void SetLight(DirectX::XMFLOAT4 color, DirectX::XMFLOAT3 dir);
 	static void SetCameraPos(const DirectX::XMFLOAT3 pos);
 	static void SetFog(DirectX::XMFLOAT4 color, float start, float range);
+	static void SetShadow(ID3D11ShaderResourceView* pShadowMap, DirectX::XMFLOAT4X4* pLightBuffer);
 	
 private:
 	static void MakeWorldVS();
 	static void MakeAnimeVS();
+	static void MakeShadowVS();
+	static void MakeShadowAnimeVS();
 	static void MakeLambertPS();
 	static void MakeSpecularPS();
 	static void MakeToonPS();
 	static void MakeFogPS();
+	static void MakeShadowPS();
 
 private:
 	static VertexShader* m_pVS[VS_KIND_MAX];
