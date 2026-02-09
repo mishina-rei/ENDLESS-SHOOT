@@ -2,7 +2,7 @@
  * @file   NativeScript.h
  * @brief  Scriptシステム用のユーザースクリプト基底クラス
  *
- * @author 
+ * @author
  * @date
  *********************************************************************/
 
@@ -12,7 +12,7 @@
 #include <functional>
 #include "SceneManager.h"
 
-// ユーザー定義スクリプトの基底クラス
+ // ユーザー定義スクリプトの基底クラス
 class NativeScript
 {
 protected:
@@ -43,7 +43,7 @@ public:
 	// 当たり判定イベント
 	virtual void OnCollisionEnter(ECS::EntityID other) {}
 	virtual void OnCollisionStay(ECS::EntityID other) {}
-	virtual void OnCollisionExit(ECS::EntityID other) {} 
+	virtual void OnCollisionExit(ECS::EntityID other) {}
 
 protected:
 
