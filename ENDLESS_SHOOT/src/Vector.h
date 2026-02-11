@@ -41,7 +41,7 @@ namespace Detail {
 	};
 }
 
-// å›ºå®šé•·é…åˆ—ã‚¯ãƒ©ã‚¹ (ãƒ™ã‚¯ãƒˆãƒ«)
+// ŒÅ’è’·”z—ñƒNƒ‰ƒX (ƒxƒNƒgƒ‹)
 template <typename T, int N>
 class Vector : public Detail::VectorStorage<T, N> {
 public:
@@ -65,11 +65,11 @@ public:
 		return this->data[index];
 	}
 	
-	// ãƒã‚¤ãƒ³ã‚¿ã¸ã®ã‚­ãƒ£ã‚¹ãƒˆ
+	// ƒ|ƒCƒ“ƒ^‚Ö‚ÌƒLƒƒƒXƒg
 	constexpr operator T*() { return this->data; }
 	constexpr operator const T*() const { return this->data; }
 
-	//--- æ¼”ç®—å­ã‚ªãƒ¼ãƒãƒ¼ãƒ­ãƒ¼ãƒ‰
+	//--- ‰‰ZqƒI[ƒo[ƒ[ƒh
 	constexpr Vector operator+() const { return *this; }
 	constexpr Vector operator-() const {
 		Vector v;
@@ -98,7 +98,7 @@ public:
 		return *this;
 	}
 
-	// æ­£è¦åŒ–
+	// ³‹K‰»
 	Vector Normalized() const {
 		T len2 = 0;
 		for (int i = 0; i < N; ++i) len2 += this->data[i] * this->data[i];
@@ -108,14 +108,14 @@ public:
 		return v /= len;
 	}
 
-	// é•·ã•
+	// ’·‚³
 	T Magnitude() const {
 		T len2 = 0;
 		for (int i = 0; i < N; ++i) len2 += this->data[i] * this->data[i];
 		return std::sqrt(len2);
 	}
 
-	// é•·ã•ã®äºŒä¹—
+	// ’·‚³‚Ì“ñæ
 	T MagnitudeSq() const {
 		T len2 = 0;
 		for (int i = 0; i < N; ++i) len2 += this->data[i] * this->data[i];
@@ -123,7 +123,7 @@ public:
 	}
 };
 
-// Vector<float, 4> ã®ç‰¹æ®ŠåŒ– (XMVECTORãƒ©ãƒƒãƒ‘ãƒ¼)
+// Vector<float, 4> ‚Ì“Áê‰» (XMVECTORƒ‰ƒbƒp[)
 template <>
 class alignas(16) Vector<float, 4> {
 public:
@@ -162,7 +162,7 @@ public:
 	operator DirectX::XMVECTOR() const { return v; }
 	Vector& operator=(const DirectX::XMVECTOR& _v) { v = _v; return *this; }
 
-	//--- æ¼”ç®—å­ã‚ªãƒ¼ãƒãƒ¼ãƒ­ãƒ¼ãƒ‰
+	//--- ‰‰ZqƒI[ƒo[ƒ[ƒh
 	constexpr Vector operator+() const { return *this; }
 	Vector operator-() const { return DirectX::XMVectorNegate(v); }
 	Vector& operator+=(const Vector& rhs) { v = DirectX::XMVectorAdd(v, rhs.v); return *this; }
@@ -175,24 +175,24 @@ public:
 		return *this;
 	}
 
-	// é•·ã•
+	// ’·‚³
 	float Magnitude() const {
 		return DirectX::XMVectorGetX(DirectX::XMVector4Length(v));
 	}
 
-	// é•·ã•ã®äºŒä¹—
+	// ’·‚³‚Ì“ñæ
 	float MagnitudeSq() const {
 		return DirectX::XMVectorGetX(DirectX::XMVector4LengthSq(v));
 	}
 };
 
-// Vector<float, 3> ã®ç‰¹æ®ŠåŒ– (XMVECTORãƒ©ãƒƒãƒ‘ãƒ¼)
+// Vector<float, 3> ‚Ì“Áê‰» (XMVECTORƒ‰ƒbƒp[)
 template <>
 class alignas(16) Vector<float, 3> {
 public:
 	union {
 		DirectX::XMVECTOR v;
-		float data[4]; // SIMDç”¨ã«4è¦ç´ ç¢ºä¿
+		float data[4]; // SIMD—p‚É4—v‘fŠm•Û
 		struct { float x, y, z; };
 	};
 
@@ -225,7 +225,7 @@ public:
 	operator DirectX::XMVECTOR() const { return v; }
 	Vector& operator=(const DirectX::XMVECTOR& _v) { v = _v; return *this; }
 
-	//--- æ¼”ç®—å­ã‚ªãƒ¼ãƒãƒ¼ãƒ­ãƒ¼ãƒ‰
+	//--- ‰‰ZqƒI[ƒo[ƒ[ƒh
 	constexpr Vector operator+() const { return *this; }
 	Vector operator-() const { return DirectX::XMVectorNegate(v); }
 	Vector& operator+=(const Vector& rhs) { v = DirectX::XMVectorAdd(v, rhs.v); return *this; }
@@ -238,23 +238,23 @@ public:
 		return *this;
 	}
 
-	// æ­£è¦åŒ–
+	// ³‹K‰»
 	Vector Normalized() const {
 		return DirectX::XMVector3Normalize(v);
 	}
 
-	// é•·ã•
+	// ’·‚³
 	float Magnitude() const {
 		return DirectX::XMVectorGetX(DirectX::XMVector3Length(v));
 	}
 
-	// é•·ã•ã®äºŒä¹—
+	// ’·‚³‚Ì“ñæ
 	float MagnitudeSq() const {
 		return DirectX::XMVectorGetX(DirectX::XMVector3LengthSq(v));
 	}
 };
 
-//--- æ±ç”¨æ¼”ç®—å­ (Vector<T, N>)
+//--- ”Ä—p‰‰Zq (Vector<T, N>)
 template <typename T, int N>
 constexpr Vector<T, N> operator+(const Vector<T, N>& v1, const Vector<T, N>& v2) {
 	Vector<T, N> v = v1; return v += v2;
@@ -280,7 +280,7 @@ constexpr Vector<T, N> operator/(const Vector<T, N>& v1, T s) {
 	Vector<T, N> v = v1; return v /= s;
 }
 
-//--- SIMDæ¼”ç®—å­ (Vector<float, 4>)
+//--- SIMD‰‰Zq (Vector<float, 4>)
 inline Vector<float, 4> operator+(const Vector<float, 4>& v1, const Vector<float, 4>& v2) {
 	return Vector<float, 4>(DirectX::XMVectorAdd(v1.v, v2.v));
 }
@@ -293,7 +293,7 @@ inline Vector<float, 4> operator*(const Vector<float, 4>& v, float s) {
 inline Vector<float, 4> operator*(float s, const Vector<float, 4>& v) {
 	return Vector<float, 4>(DirectX::XMVectorScale(v.v, s));
 }
-// ãƒ™ã‚¯ãƒˆãƒ«åŒå£«ã®ä¹—ç®—ï¼ˆæˆåˆ†ã”ã¨ã®ç©ï¼‰
+// ƒxƒNƒgƒ‹“¯m‚ÌæZi¬•ª‚²‚Æ‚ÌÏj
 inline Vector<float, 4> operator*(const Vector<float, 4>& v1, const Vector<float, 4>& v2) {
 	return Vector<float, 4>(DirectX::XMVectorMultiply(v1.v, v2.v));
 }
@@ -301,7 +301,7 @@ inline Vector<float, 4> operator/(const Vector<float, 4>& v, float s) {
 	return Vector<float, 4>(DirectX::XMVectorScale(v.v, 1.0f / s));
 }
 
-//--- SIMDæ¼”ç®—å­ (Vector<float, 3>)
+//--- SIMD‰‰Zq (Vector<float, 3>)
 inline Vector<float, 3> operator+(const Vector<float, 3>& v1, const Vector<float, 3>& v2) {
 	return Vector<float, 3>(DirectX::XMVectorAdd(v1.v, v2.v));
 }
@@ -314,7 +314,7 @@ inline Vector<float, 3> operator*(const Vector<float, 3>& v, float s) {
 inline Vector<float, 3> operator*(float s, const Vector<float, 3>& v) {
 	return Vector<float, 3>(DirectX::XMVectorScale(v.v, s));
 }
-// ãƒ™ã‚¯ãƒˆãƒ«åŒå£«ã®ä¹—ç®—ï¼ˆæˆåˆ†ã”ã¨ã®ç©ï¼‰
+// ƒxƒNƒgƒ‹“¯m‚ÌæZi¬•ª‚²‚Æ‚ÌÏj
 inline Vector<float, 3> operator*(const Vector<float, 3>& v1, const Vector<float, 3>& v2) {
 	return Vector<float, 3>(DirectX::XMVectorMultiply(v1.v, v2.v));
 }
@@ -322,8 +322,8 @@ inline Vector<float, 3> operator/(const Vector<float, 3>& v, float s) {
 	return Vector<float, 3>(DirectX::XMVectorScale(v.v, 1.0f / s));
 }
 
-//--- æ•°å­¦é–¢æ•°
-// å†…ç© (Generic)
+//--- ”ŠwŠÖ”
+// “àÏ (Generic)
 template <typename T, int N>
 constexpr T Dot(const Vector<T, N>& v1, const Vector<T, N>& v2) {
 	T ret = 0;
@@ -331,22 +331,22 @@ constexpr T Dot(const Vector<T, N>& v1, const Vector<T, N>& v2) {
 	return ret;
 }
 
-// å†…ç© (Vector3)
+// “àÏ (Vector3)
 inline float Dot(const Vector<float, 3>& v1, const Vector<float, 3>& v2) {
 	return DirectX::XMVectorGetX(DirectX::XMVector3Dot(v1.v, v2.v));
 }
 
-// å†…ç© (Vector4)
+// “àÏ (Vector4)
 inline float Dot(const Vector<float, 4>& v1, const Vector<float, 4>& v2) {
 	return DirectX::XMVectorGetX(DirectX::XMVector4Dot(v1.v, v2.v));
 }
 
-// å¤–ç© (Vector3)
+// ŠOÏ (Vector3)
 inline Vector<float, 3> Cross(const Vector<float, 3>& v1, const Vector<float, 3>& v2) {
 	return Vector<float, 3>(DirectX::XMVector3Cross(v1.v, v2.v));
 }
 
-// å‹ã‚¨ã‚¤ãƒªã‚¢ã‚¹
+// Œ^ƒGƒCƒŠƒAƒX
 using Vector2 = Vector<float, 2>;
 using Vector3 = Vector<float, 3>;
 using Vector4 = Vector<float, 4>;

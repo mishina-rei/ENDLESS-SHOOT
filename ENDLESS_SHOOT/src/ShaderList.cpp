@@ -131,7 +131,7 @@ void ShaderList::SetFog(DirectX::XMFLOAT4 color, float start, float range)
 }
 void ShaderList::SetShadow(ID3D11ShaderResourceView* pShadowMap, DirectX::XMFLOAT4X4* pLightBuffer)
 {
-	// Lambertã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã«ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿è¨­å®š
+	// LambertƒVƒF[ƒ_[‚Éƒpƒ‰ƒ[ƒ^İ’è
 	if (m_pPS[PS_LAMBERT])
 	{
 		m_pPS[PS_LAMBERT]->SetTexture(1, pShadowMap);
@@ -199,14 +199,14 @@ struct VS_OUT {
 	float2 uv : TEXCOORD0;
 	float4 color : COLOR0;
 	float4 wPos : POSITION0;
-	float4 lightSpacePos : POSITION1; // è¿½åŠ 
+	float4 lightSpacePos : POSITION1; // ’Ç‰Á
 };
 cbuffer WVP : register(b0) {
 	float4x4 world;
 	float4x4 view;
 	float4x4 proj;
 };
-cbuffer Bone : register(b1) { // b1ã¯ãƒœãƒ¼ãƒ³ã§ä½¿ç”¨
+cbuffer Bone : register(b1) { // b1‚Íƒ{[ƒ“‚Åg—p
 	float4x4 bone[200];
 };
 cbuffer LightBuffer : register(b2) { 
@@ -237,7 +237,7 @@ VS_OUT main(VS_IN vin) {
 	vout.uv = vin.uv;
 	vout.color = vin.color;
 	
-	// ãƒ©ã‚¤ãƒˆç©ºé–“åº§æ¨™ã®è¨ˆç®—
+	// ƒ‰ƒCƒg‹óŠÔÀ•W‚ÌŒvZ
 	vout.lightSpacePos = mul(vout.wPos, LightView);
 	vout.lightSpacePos = mul(vout.lightSpacePos, LightProjection);
 	
@@ -347,15 +347,15 @@ float4 main(PS_IN pin) : SV_TARGET
 	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
 	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
 	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
-	// ?{????Lambert?g?U????i?v?????\?????o?????????????p????
+	// –{—ˆ‚ÌLambertŠgU”½Ëi•¨—–@‘¥‚ÉŠî‚Ã‚­j‚ğg—p‚·‚éê‡
 	// color.rgb *= saturate(diffuse * dotNL + ambient);
-	// ???????g?U?????????F??????????????lerp(?????,diffuse,dotNL)??v?Z
-	// ????????ã‚¯?????(???Z)?A???????Î”?(???Z)????????A?e?v?Z?????`?????
+	// ƒn[ƒtƒ‰ƒ“ƒo[ƒgŠgU”½Ëi‰e‚ÌF‚ğ’²®‚·‚éjlerp(ambient, diffuse, dotNL)‚ÅŒvZ
+	// ŠÂ‹«ŒõiˆÃ‚¢Fj‚ÆŠgUŒõi–¾‚é‚¢Fj‚ğ¬‚º‚ÄŒvZ
 	diffuse *= color.rgb;
 	color.rgb = saturate(lerp(
 		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
 		diffuse, dotNL));
-	// ?{??????K?v??????????ALambert????????????K?p
+	// –{—ˆ‚Í•K—v‚È‚¢‚ªALambert”½Ë‚ğƒXƒyƒLƒ…ƒ‰‚É“K—p
 	color.rgb += specular * pow(saturate(dotNL), max(0.01f, objSpecular.a) * 0.5f) * 0.5f;
 	return color;
 })EOT";
@@ -403,7 +403,7 @@ float4 main(PS_IN pin) : SV_TARGET
 	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
 	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
 	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
-	// Lambert??v?Z???Q?l
+	// Lambert‚ÌŒvZ‚ğQÆ
 	color.rgb *= saturate(lerp(
 		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
 		diffuse, dotNL));
@@ -442,12 +442,12 @@ float4 main(PS_IN pin) : SV_TARGET
 		color = tex.Sample(samp, pin.uv);
 	float3 N = normalize(pin.normal);
 	float3 L = normalize(-lightDir);
-	float dotNL = dot(N, L); // ?}?C?i?X????v?Z
+	float dotNL = dot(N, L); // ƒ}ƒCƒiƒX’l‚àŒvZ
 	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
 	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
 	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
-	float toonNL = saturate((dot(N, L) + 0.5f) / 1.5f * 100.0f); // ?A???????_????
-	// Lambert??v?Z???Q?l
+	float toonNL = saturate((dot(N, L) + 0.5f) / 1.5f * 100.0f); // ƒAƒjƒ’²‚ÌŠK’²‰»
+	// Lambert‚ÌŒvZ‚ğQÆ
 	color.rgb *= saturate(lerp(
 		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
 		diffuse, toonNL));

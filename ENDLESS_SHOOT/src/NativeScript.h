@@ -1,6 +1,6 @@
 /*****************************************************************//**
  * @file   NativeScript.h
- * @brief  Scriptã‚·ã‚¹ãƒ†ãƒ ç”¨ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚¹ã‚¯ãƒªãƒ—ãƒˆåŸºåº•ã‚¯ãƒ©ã‚¹
+ * @brief  ScriptƒVƒXƒeƒ€—p‚Ìƒ†[ƒU[ƒXƒNƒŠƒvƒgŠî’êƒNƒ‰ƒX
  *
  * @author
  * @date
@@ -12,7 +12,7 @@
 #include <functional>
 #include "SceneManager.h"
 
- // ãƒ¦ãƒ¼ã‚¶ãƒ¼å®šç¾©ã‚¹ã‚¯ãƒªãƒ—ãƒˆã®åŸºåº•ã‚¯ãƒ©ã‚¹
+ // ƒ†[ƒU[’è‹`ƒXƒNƒŠƒvƒg‚ÌŠî’êƒNƒ‰ƒX
 class NativeScript
 {
 protected:
@@ -23,7 +23,7 @@ protected:
 public:
 	virtual ~NativeScript() = default;
 
-	// ã‚·ã‚¹ãƒ†ãƒ ãŒå‘¼ã¶åˆæœŸåŒ–é–¢æ•°
+	// ƒVƒXƒeƒ€‚ªŒÄ‚Ô‰Šú‰»ŠÖ”
 	void Init(ECS::World* _world, ECS::EntityID _id)
 	{
 		world = _world;
@@ -34,20 +34,20 @@ public:
 
 	bool IsInitialized() const { return isInitialized; }
 
-	// ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ã™ã‚‹é–¢æ•°
+	// ƒ†[ƒU[‚ªƒI[ƒo[ƒ‰ƒCƒh‚·‚éŠÖ”
 	virtual void OnCreate() {}
 	virtual void Update() {}
 	virtual void LateUpdate() {}
 	virtual void OnDestroy() {}
 
-	// å½“ãŸã‚Šåˆ¤å®šã‚¤ãƒ™ãƒ³ãƒˆ
+	// “–‚½‚è”»’èƒCƒxƒ“ƒg
 	virtual void OnCollisionEnter(ECS::EntityID other) {}
 	virtual void OnCollisionStay(ECS::EntityID other) {}
 	virtual void OnCollisionExit(ECS::EntityID other) {}
 
 protected:
 
-	// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆå–å¾—ãƒ˜ãƒ«ãƒ‘ãƒ¼
+	// ƒRƒ“ƒ|[ƒlƒ“ƒgæ“¾ƒwƒ‹ƒp[
 	template <typename T>
 	T& GetComponent()
 	{
@@ -60,7 +60,7 @@ protected:
 		return world->HasComponent<T>(entityId);
 	}
 
-	// ã‚³ãƒãƒ³ãƒ‰ï¼ˆãƒ©ãƒ ãƒ€å¼ãªã©ï¼‰ã‚’ç©ã‚€
+	// ƒRƒ}ƒ“ƒhiƒ‰ƒ€ƒ_®‚È‚Çj‚ğÏ‚Ş
 	void Push(std::function<void(ECS::World&)> cmd) {
 		SceneManager::GetInstance().GetCurrentScene()->GetCommandBuffer()->Push(cmd);
 	}

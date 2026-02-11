@@ -1,4 +1,4 @@
-Ôªø#include "EnemyGenerator.h"
+#include "EnemyGenerator.h"
 #include "Random.h"
 #include "Enemy.h"
 #include "ShootingEnemy.h"
@@ -19,7 +19,7 @@ void EnemyGenerator::Create(ECS::World& world, const Vector3& position)
 
 	if (type == 0)
 	{
-		// ÈÄöÂ∏∏„ÅÆÊïµ (Dog)
+		// í èÌÇÃìG (Dog)
 		Model* pModel = new Model();
 		pModel->Load("Assets/Model/character_dog.fbx");
 		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
@@ -40,7 +40,7 @@ void EnemyGenerator::Create(ECS::World& world, const Vector3& position)
 	}
 	else if (type == 1)
 	{
-		// Â∞ÑÊíÉ„Åô„ÇãÊïµ (Voletir)
+		// éÀåÇÇ∑ÇÈìG (Voletir)
 		Model* pModel = new Model();
 		pModel->Load("Assets/Model/Voletir.fbx");
 		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_ANIME));
@@ -63,14 +63,14 @@ void EnemyGenerator::Create(ECS::World& world, const Vector3& position)
 	}
 	else
 	{
-		// È£õË°å„Åô„ÇãÊïµ (FlyingEnemy)
+		// îÚçsÇ∑ÇÈìG (FlyingEnemy)
 		Model* pModel = new Model();
-		pModel->Load("Assets/Model/Voletir.fbx"); // „É¢„Éá„É´„ÅØÊµÅÁî®
+		pModel->Load("Assets/Model/Voletir.fbx"); // ÉÇÉfÉãÇÕó¨óp
 		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_ANIME));
 		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
 		pModel->AddAnimation("Assets/Model/Anim_Voletir_06_OpenVault_Idle.fbx");
 		MeshRenderer mr(pModel);
-		mr.color = Vector4(0.5f, 0.5f, 1.0f, 1.0f); // Èùí„Å£„ÅΩ„Åè„Åô„Çã
+		mr.color = Vector4(0.5f, 0.5f, 1.0f, 1.0f); // ê¬Ç¡Ç€Ç≠Ç∑ÇÈ
 		world.AddComponent<MeshRenderer>(entity, mr);
 
 		BoxCollider enemyCol(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), Quaternion::Identity());

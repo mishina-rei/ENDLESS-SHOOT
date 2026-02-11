@@ -19,9 +19,9 @@ struct SpriteRenderer
 	
 	Vector4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	Vector2 size = { 100.0f, 100.0f };
-	Vector2 pivot = { 0.5f, 0.5f }; // 0.5, 0.5 ã§ä¸­å¿ƒåŸºæº–
+	Vector2 pivot = { 0.5f, 0.5f }; // 0.5, 0.5 ‚Å’†SŠî€
 	
-	// UVã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç”¨
+	// UVƒAƒjƒ[ƒVƒ‡ƒ“—p
 	Vector2 uvPos = { 0.0f, 0.0f };
 	Vector2 uvScale = { 1.0f, 1.0f };
 

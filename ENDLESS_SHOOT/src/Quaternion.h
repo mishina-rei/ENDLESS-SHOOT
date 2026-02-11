@@ -12,41 +12,41 @@ public:
 		float data[4];
 	};
 
-	//--- ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
-	// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯å˜ä½å…ƒ (0, 0, 0, 1)
+	//--- ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ƒfƒtƒHƒ‹ƒg‚Í’PˆÊŒ³ (0, 0, 0, 1)
 	constexpr Quaternion() : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {}
 	constexpr Quaternion(float _x, float _y, float _z, float _w)
 		: x(_x), y(_y), z(_z), w(_w) {}
 	Quaternion(float _x, float _y, float _z) { *this = FromRotation(_x, _y, _z); }
 	Quaternion(DirectX::XMVECTOR _v) { v = _v; }
 
-	//--- ä»£å…¥æ¼”ç®—å­
+	//--- ‘ã“ü‰‰Zq
 	Quaternion& operator=(const DirectX::XMVECTOR& _v) { v = _v; return *this; }
 
-	//--- ã‚­ãƒ£ã‚¹ãƒˆ
+	//--- ƒLƒƒƒXƒg
 	operator DirectX::XMVECTOR() const { return v; }
 
-	//--- å˜é …æ¼”ç®—å­
+	//--- ’P€‰‰Zq
 	constexpr Quaternion operator+() const { return *this; }
 	Quaternion operator-() const { return DirectX::XMVectorNegate(v); }
 
-	//--- äºŒé …æ¼”ç®—å­ (ä»£å…¥)
+	//--- “ñ€‰‰Zq (‘ã“ü)
 	Quaternion& operator+=(const Quaternion& rhs) { v = DirectX::XMVectorAdd(v, rhs.v); return *this; }
 	Quaternion& operator-=(const Quaternion& rhs) { v = DirectX::XMVectorSubtract(v, rhs.v); return *this; }
 	Quaternion& operator*=(const Quaternion& rhs) { v = DirectX::XMQuaternionMultiply(v, rhs.v); return *this; }
 	Quaternion& operator*=(float s) { v = DirectX::XMVectorScale(v, s); return *this; }
 	Quaternion& operator/=(float s) { v = DirectX::XMVectorScale(v, 1.0f / s); return *this; }
 
-	//--- ä¾¿åˆ©é–¢æ•°
-	// å˜ä½å…ƒ
+	//--- •Ö—˜ŠÖ”
+	// ’PˆÊŒ³
 	static Quaternion Identity() { return Quaternion(0.0f, 0.0f, 0.0f, 1.0f); }
 	
-	// è»¸å›è»¢
+	// ²‰ñ“]
 	static Quaternion RotationAxis(const Vector<float, 3>& axis, float angle) {
 		return DirectX::XMQuaternionRotationAxis(axis, angle);
 	}
 	
-	// ã‚ªã‚¤ãƒ©ãƒ¼è§’ã‹ã‚‰ä½œæˆ
+	// ƒIƒCƒ‰[Šp‚©‚çì¬
 	static Quaternion FromRotation(float pitch, float yaw, float roll) {
 		pitch = DirectX::XMConvertToRadians(pitch);
 		yaw = DirectX::XMConvertToRadians(yaw);
@@ -54,7 +54,7 @@ public:
 		return DirectX::XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
 	}
 
-	// ã‚ªã‚¤ãƒ©ãƒ¼è§’ã‹ã‚‰ä½œæˆ(Vectorã‹ã‚‰)
+	// ƒIƒCƒ‰[Šp‚©‚çì¬(Vector‚©‚ç)
 	static Quaternion FromRotation(Vector<float, 3> angles) {
 		angles.x = DirectX::XMConvertToRadians(angles.x);
 		angles.y = DirectX::XMConvertToRadians(angles.y);	
@@ -62,37 +62,37 @@ public:
 		return DirectX::XMQuaternionRotationRollPitchYawFromVector(angles);
 	}
 
-	// å›è»¢è¡Œåˆ—ã‹ã‚‰ä½œæˆ
+	// ‰ñ“]s—ñ‚©‚çì¬
 	static Quaternion RotationMatrix(const DirectX::XMMATRIX& mat) {
 		return DirectX::XMQuaternionRotationMatrix(mat);
 	}
 
-	// çƒé¢ç·šå½¢è£œé–“ (Slerp)
+	// ‹…–ÊüŒ`•âŠÔ (Slerp)
 	static Quaternion Slerp(const Quaternion& q1, const Quaternion& q2, float t) {
 		return DirectX::XMQuaternionSlerp(q1, q2, t);
 	}
 
-	// å…±å½¹
+	// ‹¤–ğ
 	Quaternion Conjugate() const {
 		return DirectX::XMQuaternionConjugate(v);
 	}
 
-	// é€†å…ƒ
+	// ‹tŒ³
 	Quaternion Inverse() const {
 		return DirectX::XMQuaternionInverse(v);
 	}
 
-	// æ­£è¦åŒ–
+	// ³‹K‰»
 	Quaternion Normalize() const {
 		return DirectX::XMQuaternionNormalize(v);
 	}
 
-	// ãƒ™ã‚¯ãƒˆãƒ«å›è»¢
+	// ƒxƒNƒgƒ‹‰ñ“]
 	Vector<float, 3> Rotate(const Vector<float, 3>& vec) const {
 		return DirectX::XMVector3Rotate(vec, v);
 	}
 
-	// ã‚ªã‚¤ãƒ©ãƒ¼è§’ã®æ•°å€¤ã‚’è¿”ã™
+	// ƒIƒCƒ‰[Šp‚Ì”’l‚ğ•Ô‚·
 	Vector3 ToEuler() {
 		Vector3 angles;
 
@@ -113,7 +113,7 @@ public:
 		float cosr = 1.0f - 2.0f * (x * x + z * z);
 		angles.z = std::atan2(sinr, cosr);
 
-		// ãƒ©ã‚¸ã‚¢ãƒ³ã‹ã‚‰åº¦æ•°æ³•ã«å¤‰æ›
+		// ƒ‰ƒWƒAƒ“‚©‚ç“x”–@‚É•ÏŠ·
 		angles.x = DirectX::XMConvertToDegrees(angles.x);
 		angles.y = DirectX::XMConvertToDegrees(angles.y);
 		angles.z = DirectX::XMConvertToDegrees(angles.z);
@@ -122,7 +122,7 @@ public:
 	}
 };
 
-//--- äºŒé …æ¼”ç®—å­ (ã‚°ãƒ­ãƒ¼ãƒãƒ«)
+//--- “ñ€‰‰Zq (ƒOƒ[ƒoƒ‹)
 inline Quaternion operator+(const Quaternion& q1, const Quaternion& q2) {
 	return DirectX::XMVectorAdd(q1.v, q2.v);
 }
@@ -139,12 +139,12 @@ inline Quaternion operator*(float s, const Quaternion& q) {
 	return DirectX::XMVectorScale(q.v, s);
 }
 
-// ãƒ™ã‚¯ãƒˆãƒ«å›è»¢ (q * v)
+// ƒxƒNƒgƒ‹‰ñ“] (q * v)
 inline Vector<float, 3> operator*(const Quaternion& q, const Vector<float, 3>& v) {
 	return DirectX::XMVector3Rotate(v, q.v);
 }
 
-// ãƒ™ã‚¯ãƒˆãƒ«å›è»¢ (v * q)
+// ƒxƒNƒgƒ‹‰ñ“] (v * q)
 inline Vector<float, 3> operator*(const Vector<float, 3>& v, const Quaternion& q) {
 	return DirectX::XMVector3Rotate(v, q.v);
 }
