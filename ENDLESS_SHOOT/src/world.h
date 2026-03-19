@@ -91,7 +91,10 @@ namespace ECS
         template <typename T>
         bool HasComponent(EntityID id) 
         {
+            // コンポーネントのIDを取得
             ComponentTypeID typeId = ComponentRegistry::GetID<T>();
+
+            // アーキタイプに入れるコンポーネントか確認
             if (structuralTypes.count(typeId)) 
             {
                 if (entityIndex.find(id) == entityIndex.end()) return false;
@@ -110,8 +113,10 @@ namespace ECS
         template <typename T>
         T& GetComponent(EntityID id) 
         {
+            // コンポーネントのIDを取得
             ComponentTypeID typeId = ComponentRegistry::GetID<T>();
 
+            // アーキタイプに入れるコンポーネントか確認
             if (structuralTypes.count(typeId)) 
             {
                 // アーキタイプから取得
@@ -129,13 +134,18 @@ namespace ECS
         template <typename... Components, typename Func>
         void ForEach(Func func) 
         {
+            // コンポーネントのIDを取得
             std::vector<ComponentTypeID> typeIds = { ComponentRegistry::GetID<Components>()... };
 
+            // アーキタイプを走査
             for (auto& [sig, arch] : archetypeMap) 
             {
                 bool hasAll = true;
+
+                // アーキタイプが指定のコンポーネントを含んでいるか確認
                 for (auto id : typeIds) 
                 {
+                    // １つでも含んでいなかったら処理を終わる
                     if (arch->columns.find(id) == arch->columns.end()) {
                         hasAll = false;
                         break;
@@ -143,6 +153,7 @@ namespace ECS
                 }
                 if (!hasAll) continue;
 
+                // 指定のコンポーネントの配列をダウンキャストしてタプルにまとめる
                 auto arrays = std::make_tuple(
                     static_cast<ComponentArray<Components>*>(arch->columns[ComponentRegistry::GetID<Components>()].get())...
                 );
