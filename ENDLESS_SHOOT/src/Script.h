@@ -2,12 +2,12 @@
 #include <memory>
 #include "NativeScript.h"
 
-// ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’ä¿æŒã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
+// ƒXƒNƒŠƒvƒg‚ğ•Û‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg
 struct Script
 {
 	std::shared_ptr<NativeScript> script;
 
-	// ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’ç”Ÿæˆã—ã¦ãƒã‚¤ãƒ³ãƒ‰ã™ã‚‹ãƒ˜ãƒ«ãƒ‘ãƒ¼
+	// ƒXƒNƒŠƒvƒg‚ğ¶¬‚µ‚ÄƒoƒCƒ“ƒh‚·‚éƒwƒ‹ƒp[
 	template <typename T, typename... Args>
 	void Bind(Args&&... args)
 	{

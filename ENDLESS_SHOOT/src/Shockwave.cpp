@@ -9,7 +9,7 @@ static constexpr float DAMAGE = 0.5f;
 
 void Shockwave::Update()
 {
-	// ?
+	// ??????????
 	lifeTime -= 1.0f / fFPS;
 	if (lifeTime <= 0.0f)
 	{

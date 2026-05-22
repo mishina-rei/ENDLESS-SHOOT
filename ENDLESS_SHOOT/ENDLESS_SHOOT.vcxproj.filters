@@ -65,16 +65,16 @@
       <UniqueIdentifier>{46407a61-d5b9-4431-a1c8-782faa483a62}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Application\Logic">
-      <UniqueIdentifier>{45dcc531-8e2d-4c28-b9a3-0472443a183e}</UniqueIdentifier>
+      <UniqueIdentifier>{a9760d88-c728-4a61-8474-c5b93f167896}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Framework\Core">
-      <UniqueIdentifier>{768dbdbb-d436-407c-8d77-fd79d61df684}</UniqueIdentifier>
+      <UniqueIdentifier>{afa60c37-24d6-4a61-bd77-788461ff9c0d}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\Application\Logic">
-      <UniqueIdentifier>{d6ec9c5b-ea21-4732-a436-c9853fe776b7}</UniqueIdentifier>
+      <UniqueIdentifier>{633a46c9-be92-4111-89af-58c1a2b000a2}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\Framework\Core">
-      <UniqueIdentifier>{a4f4f6f6-7d02-4619-a1ce-65ee0b9ea60c}</UniqueIdentifier>
+      <UniqueIdentifier>{bd3a686e-a840-4975-aafb-adaed36c1e42}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

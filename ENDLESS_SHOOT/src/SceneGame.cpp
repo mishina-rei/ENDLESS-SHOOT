@@ -29,7 +29,7 @@ void SceneGame::Init()
 	GameManager::AdvanceStage();
 
 	{
-		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
+		// ƒvƒŒƒCƒ„[
 		ECS::EntityID entity = world.CreateEntity();
 		Script script;
 		script.Bind<Player>();
@@ -44,7 +44,7 @@ void SceneGame::Init()
 		world.AddComponent<Script>(entity, script);
 	}
 
-	// BGMå†ç”Ÿç”¨ã‚¨ãƒ³ãƒ†ã‚£ãƒ†ã‚£ã®ä½œæˆ
+	// BGMÄ¶—pƒGƒ“ƒeƒBƒeƒB‚Ìì¬
 	{
 		ECS::EntityID entity = world.CreateEntity();
 		Script script;
@@ -52,12 +52,11 @@ void SceneGame::Init()
 		world.AddComponent<Script>(entity, script);
 	}
 
-	// ï¿½Gï¿½ï¿½ï¿½eï¿½Bï¿½eï¿½Bï¿½Ìì¬
 	{
-		// æ•µã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼
+		// “GƒLƒƒƒ‰ƒNƒ^[
 		ECS::EntityID entity = world.CreateEntity();
 		Transform t;
-		t.position = Vector3(0.0f, 1.0f, 5.0f); // å°‘ã—é›¢ã‚ŒãŸä½ç½®ã«é…ç½®
+		t.position = Vector3(0.0f, 1.0f, 5.0f); // ­‚µ—£‚ê‚½ˆÊ’u‚É”z’u
 		world.AddComponent<Transform>(entity, t);
 
 		Model* pModel = new Model();
@@ -66,27 +65,27 @@ void SceneGame::Init()
 		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
 		world.AddComponent<MeshRenderer>(entity, MeshRenderer(pModel));
 
-		// Enemyã‚¹ã‚¯ãƒªãƒ—ãƒˆã¨Colliderã‚’è¿½åŠ 
+		// EnemyƒXƒNƒŠƒvƒg‚ÆCollider‚ğ’Ç‰Á
 		BoxCollider enemyCol(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 2.0f, 1.0f), Quaternion::Identity());
 		enemyCol.tag = CollisionTag::ENEMY;
-		enemyCol.isStatic = false; // è¡çªã‚¤ãƒ™ãƒ³ãƒˆã‚’å—ã‘å–ã‚‹ãŸã‚
-		world.AddComponent<BoxCollider>(entity, enemyCol);
+		enemyCol.isStatic = false; // Õ“ËƒCƒxƒ“ƒg‚ğó‚¯æ‚é‚½‚ß
+		world.AddComponents<BoxCollider, EnemyTag>(entity, enemyCol, EnemyTag());
 
 		Script enemyScript;
 		enemyScript.Bind<Enemy>();
 		world.AddComponent<Script>(entity, enemyScript);
 
-		world.AddComponent<EnemyTag>(entity, EnemyTag());
+		//world.AddComponent<EnemyTag>(entity, EnemyTag());
 
 		Rigidbody rb;
 		world.AddComponent<Rigidbody>(entity, rb);
 	}
 
-	// å°„æ’ƒã™ã‚‹æ•µã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®ä½œæˆ
+	// ËŒ‚‚·‚é“GƒLƒƒƒ‰ƒNƒ^[‚Ìì¬
 	{
 		ECS::EntityID entity = world.CreateEntity();
 		Transform t;
-		t.position = Vector3(5.0f, 1.0f, -5.0f); // å°‘ã—é›¢ã‚ŒãŸä½ç½®ã«é…ç½®
+		t.position = Vector3(5.0f, 1.0f, -5.0f); // ­‚µ—£‚ê‚½ˆÊ’u‚É”z’u
 		t.scale = Vector3(1.0f, 1.0f, 1.0f);
 		world.AddComponent<Transform>(entity, t);
 
@@ -108,14 +107,14 @@ void SceneGame::Init()
 		world.AddComponent<Script>(entity, enemyScript);
 
 		Rigidbody rb;
-		rb.useGravity = false; // é‡åŠ›ç„¡åŠ¹
+		rb.useGravity = false; // d—Í–³Œø
 		world.AddComponent<Rigidbody>(entity, rb);
 
 		world.AddComponent<EnemyTag>(entity, EnemyTag());
 	}
 
 	{
-		// ã‚†ã‹
+		// ‚ä‚©
 		ECS::EntityID entity = world.CreateEntity();
 		Transform transform;
 		transform.position = Vector3(0.0f, -0.5f, 0.0f);
@@ -133,7 +132,7 @@ void SceneGame::Init()
 		world.AddComponent<MeshRenderer>(entity, MeshRenderer(pModel));
 	}
 
-	// è½ã¡ãªã„ã‚ˆã†ã«ã™ã‚‹ãŸã‚ã®å£
+	// —‚¿‚È‚¢‚æ‚¤‚É‚·‚é‚½‚ß‚Ì•Ç
 	{
 		// +Z
 		ECS::EntityID entity = world.CreateEntity();
@@ -184,7 +183,7 @@ void SceneGame::Init()
 	}
 
 	{
-		// å¤©äº•
+		// “Vˆä
 		ECS::EntityID entity = world.CreateEntity();
 		Transform transform;
 		transform.position = Vector3(0.0f, -0.5f + STAGE_Y, 0.0f);

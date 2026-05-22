@@ -10,7 +10,7 @@ public:
 
 	IDGenerator() : m_nextId(0) {}
 
-	// IDç”Ÿæˆ
+	// ID¶¬
 	ID Generate()
 	{
 		if (!m_freeIds.empty())
@@ -22,13 +22,13 @@ public:
 		return m_nextId++;
 	}
 
-	// IDè§£æ”¾ï¼ˆå†åˆ©ç”¨ï¼‰
+	// ID‰ğ•úiÄ—˜—pj
 	void Release(ID id)
 	{
 		m_freeIds.push(id);
 	}
 
-	// å…¨ãƒªã‚»ãƒƒãƒˆ
+	// ‘SƒŠƒZƒbƒg
 	void Reset()
 	{
 		m_nextId = 0;

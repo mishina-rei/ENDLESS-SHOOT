@@ -18,13 +18,13 @@ public:
 
 	ECS::World* GetWorld() { return &world; }
 
-	// ã‚³ãƒãƒ³ãƒ‰ãƒãƒƒãƒ•ã‚¡ã‚’å–å¾—
+	// ƒRƒ}ƒ“ƒhƒoƒbƒtƒ@‚ğæ“¾
 	CommandBuffer* GetCommandBuffer() { return &commandBuffer; }
 
-	// æºœã¾ã£ãŸã‚³ãƒãƒ³ãƒ‰ã‚’å®Ÿè¡Œï¼ˆãƒ•ãƒ¬ãƒ¼ãƒ ã®æœ€å¾Œãªã©ã§å‘¼ã¶ï¼‰
+	// —­‚Ü‚Á‚½ƒRƒ}ƒ“ƒh‚ğÀsiƒtƒŒ[ƒ€‚ÌÅŒã‚È‚Ç‚ÅŒÄ‚Ôj
 	void ExecuteCommands() { commandBuffer.Execute(world); }
 
-	// Worldã®æ©Ÿèƒ½ã‚’Sceneã‹ã‚‰ç›´æ¥å‘¼ã¹ã‚‹ã‚ˆã†ã«ã™ã‚‹ãƒ©ãƒƒãƒ‘ãƒ¼é–¢æ•°
+	// World‚Ì‹@”\‚ğScene‚©‚ç’¼ÚŒÄ‚×‚é‚æ‚¤‚É‚·‚éƒ‰ƒbƒp[ŠÖ”
 	ECS::EntityID CreateEntity() { return world.CreateEntity(); }
 
 	template <typename T>

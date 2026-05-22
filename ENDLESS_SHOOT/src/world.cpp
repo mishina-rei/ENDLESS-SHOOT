@@ -2,7 +2,7 @@
 
 ECS::World::World() 
 {
-    // ç©ºã®ã‚¢ãƒ¼ã‚­ã‚¿ã‚¤ãƒ—ã‚’ä½œæˆ
+    // ‹ó‚ÌƒA[ƒLƒ^ƒCƒv‚ğì¬
     Signature emptySig;
     emptyArchetype = std::make_shared<Archetype>(emptySig);
     archetypeMap[emptySig] = emptyArchetype;
@@ -18,7 +18,7 @@ ECS::EntityID ECS::World::CreateEntity()
 
 void ECS::World::DeleteEntity(EntityID id)
 {
-    // å­˜åœ¨ç¢ºèª
+    // ‘¶İŠm”F
     if (entityIndex.find(id) == entityIndex.end())
         return;
 
@@ -26,24 +26,24 @@ void ECS::World::DeleteEntity(EntityID id)
     auto arch = record.archetype;
     size_t index = record.index;
 
-    // ã‚¢ãƒ¼ã‚­ã‚¿ã‚¤ãƒ—ã‹ã‚‰å‰Šé™¤ (Swap & Pop)
-    // æˆ»ã‚Šå€¤: {ç§»å‹•ãŒç™ºç”Ÿã—ãŸã‹, ç§»å‹•ã—ãŸEntityID}
+    // ƒA[ƒLƒ^ƒCƒv‚©‚çíœ (Swap & Pop)
+    // –ß‚è’l: {ˆÚ“®‚ª”­¶‚µ‚½‚©, ˆÚ“®‚µ‚½EntityID}
     auto result = arch->RemoveEntity(index);
 
-    // Swapå‰Šé™¤ã§åˆ¥ã®ã‚¨ãƒ³ãƒ†ã‚£ãƒ†ã‚£ãŒç§»å‹•ã—ã¦ããŸå ´åˆã€ãã®ã‚¨ãƒ³ãƒ†ã‚£ãƒ†ã‚£ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹æƒ…å ±ã‚’æ›´æ–°
+    // Swapíœ‚Å•Ê‚ÌƒGƒ“ƒeƒBƒeƒB‚ªˆÚ“®‚µ‚Ä‚«‚½ê‡A‚»‚ÌƒGƒ“ƒeƒBƒeƒB‚ÌƒCƒ“ƒfƒbƒNƒXî•ñ‚ğXV
     if (result.first) {
         entityIndex[result.second].index = index;
     }
 
-    // ç®¡ç†ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤
+    // ŠÇ—ƒŠƒXƒg‚©‚çíœ
     entityIndex.erase(id);
 
-    // ã‚¹ãƒ‘ãƒ¼ã‚¹ãƒ—ãƒ¼ãƒ«ï¼ˆæ§‹é€ çš„ã§ãªã„ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆï¼‰ã‹ã‚‰ã‚‚å‰Šé™¤
+    // ƒXƒp[ƒXƒv[ƒ‹i\‘¢“I‚Å‚È‚¢ƒRƒ“ƒ|[ƒlƒ“ƒgj‚©‚ç‚àíœ
     for (auto& pair : sparsePools) {
         pair.second->Remove(id);
     }
 
-    // IDã‚’è§£æ”¾
+    // ID‚ğ‰ğ•ú
     entityIdGen.Release(id);
 }
 
@@ -62,33 +62,33 @@ void ECS::World::MigrateEntity(EntityID id, EntityRecord& record, std::shared_pt
     size_t oldIdx = record.index;
     size_t newIdx = newArch->AddEntity(id);
 
-    // å„ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®ç§»å‹•
+    // ŠeƒRƒ“ƒ|[ƒlƒ“ƒg‚ÌˆÚ“®
     for (auto& pair : oldArch->columns) 
     {
         ComponentTypeID type = pair.first;
 
-        // æ–°ã—ã„ã‚¢ãƒ¼ã‚­ã‚¿ã‚¤ãƒ—ã«å«ã¾ã‚Œãªã„ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¯ç§»å‹•ã—ãªã„
+        // V‚µ‚¢ƒA[ƒLƒ^ƒCƒv‚ÉŠÜ‚Ü‚ê‚È‚¢ƒRƒ“ƒ|[ƒlƒ“ƒg‚ÍˆÚ“®‚µ‚È‚¢
         if (!std::binary_search(newArch->signature.begin(), newArch->signature.end(), type))
             continue;
             
-        // æ–°ã—ã„ã‚¢ãƒ¼ã‚­ã‚¿ã‚¤ãƒ—ã«åˆ—(Array)ãŒãªã‘ã‚Œã°ä½œæˆ
+        // V‚µ‚¢ƒA[ƒLƒ^ƒCƒv‚É—ñ(Array)‚ª‚È‚¯‚ê‚Îì¬
         if (newArch->columns.find(type) == newArch->columns.end()) {
             newArch->columns[type] = pair.second->CreateNew();
         }
 
-        // ãƒ‡ãƒ¼ã‚¿ã®ç§»å‹•
+        // ƒf[ƒ^‚ÌˆÚ“®
         pair.second->MoveData(oldIdx, newArch->columns[type].get(), newIdx);
     }
 
-    // å¤ã„ã‚¢ãƒ¼ã‚­ã‚¿ã‚¤ãƒ—ã‹ã‚‰å‰Šé™¤
+    // ŒÃ‚¢ƒA[ƒLƒ^ƒCƒv‚©‚çíœ
     auto result = oldArch->RemoveEntity(oldIdx);
 
-    // Swapå‰Šé™¤ã§ç§»å‹•ãŒç™ºç”Ÿã—ãŸå ´åˆã€ãã®ã‚¨ãƒ³ãƒ†ã‚£ãƒ†ã‚£ã®Indexã‚’æ›´æ–°
+    // Swapíœ‚ÅˆÚ“®‚ª”­¶‚µ‚½ê‡A‚»‚ÌƒGƒ“ƒeƒBƒeƒB‚ÌIndex‚ğXV
     if (result.first) {
         entityIndex[result.second].index = oldIdx;
     }
 
-    // è‡ªèº«ã®ãƒ¬ã‚³ãƒ¼ãƒ‰æ›´æ–°
+    // ©g‚ÌƒŒƒR[ƒhXV
     record.archetype = newArch;
     record.index = newIdx;
 }

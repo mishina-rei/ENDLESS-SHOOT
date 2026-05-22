@@ -11,7 +11,7 @@ void SceneManager::Update()
 	UpdateInput();
 	ChangeScene();
 	currentScene->Update();
-	currentScene->ExecuteCommands(); // é…å»¶ã•ã›ã¦ã„ãŸWorldã¸ã®å¤‰æ›´ã‚’é©ç”¨
+	currentScene->ExecuteCommands(); // ’x‰„‚³‚¹‚Ä‚¢‚½World‚Ö‚Ì•ÏX‚ð“K—p
 }
 
 void SceneManager::Draw()
@@ -40,5 +40,5 @@ void SceneManager::ChangeScene()
 	currentScene = nextScene;
 	nextScene = nullptr;
 	currentScene->Init();
-	currentScene->ExecuteCommands(); // åˆæœŸåŒ–æ™‚ã«æºœã¾ã£ãŸã‚³ãƒžãƒ³ãƒ‰ã‚’å®Ÿè¡Œ
+	currentScene->ExecuteCommands(); // ‰Šú‰»Žž‚É—­‚Ü‚Á‚½ƒRƒ}ƒ“ƒh‚ðŽÀs
 }

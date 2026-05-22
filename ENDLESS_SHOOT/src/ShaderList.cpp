@@ -131,7 +131,7 @@ void ShaderList::SetFog(DirectX::XMFLOAT4 color, float start, float range)
 }
 void ShaderList::SetShadow(ID3D11ShaderResourceView* pShadowMap, DirectX::XMFLOAT4X4* pLightBuffer)
 {
-	// LambertVF[_[?ep?p[^n
+	// Lambertシェーダーにパラメータ設定
 	if (m_pPS[PS_LAMBERT])
 	{
 		m_pPS[PS_LAMBERT]->SetTexture(1, pShadowMap);
@@ -347,15 +347,15 @@ float4 main(PS_IN pin) : SV_TARGET
 	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
 	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
 	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
-	// ?{????Lambert?g?U????i?v?????\?????o?????????????p????
+	// 本来のLambert拡散反射（物理法則に基づく）を使用する場合
 	// color.rgb *= saturate(diffuse * dotNL + ambient);
-	// ???????g?U?????????F??????????????lerp(?????,diffuse,dotNL)??v?Z
-	// ????????ク?????(???Z)?A???????Δ?(???Z)????????A?e?v?Z?????`?????
+	// ハーフランバート拡散反射（影の色を調整する）lerp(ambient, diffuse, dotNL)で計算
+	// 環境光（暗い色）と拡散光（明るい色）を混ぜて計算
 	diffuse *= color.rgb;
 	color.rgb = saturate(lerp(
 		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
 		diffuse, dotNL));
-	// ?{??????K?v??????????ALambert????????????K?p
+	// 本来は必要ないが、Lambert反射をスペキュラに適用
 	color.rgb += specular * pow(saturate(dotNL), max(0.01f, objSpecular.a) * 0.5f) * 0.5f;
 	return color;
 })EOT";
@@ -403,7 +403,7 @@ float4 main(PS_IN pin) : SV_TARGET
 	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
 	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
 	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
-	// Lambert??v?Z???Q?l
+	// Lambertの計算を参照
 	color.rgb *= saturate(lerp(
 		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
 		diffuse, dotNL));
@@ -442,12 +442,12 @@ float4 main(PS_IN pin) : SV_TARGET
 		color = tex.Sample(samp, pin.uv);
 	float3 N = normalize(pin.normal);
 	float3 L = normalize(-lightDir);
-	float dotNL = dot(N, L); // ?}?C?i?X????v?Z
+	float dotNL = dot(N, L); // マイナス値も計算
 	float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
 	float3 ambient = objAmbient.rgb * lightDiffuse.rgb;
 	float3 specular = objSpecular.rgb * lightDiffuse.rgb;
-	float toonNL = saturate((dot(N, L) + 0.5f) / 1.5f * 100.0f); // ?A???????_????
-	// Lambert??v?Z???Q?l
+	float toonNL = saturate((dot(N, L) + 0.5f) / 1.5f * 100.0f); // アニメ調の階調化
+	// Lambertの計算を参照
 	color.rgb *= saturate(lerp(
 		lerp(diffuse * ambient, diffuse + ambient, pow(ambient, 4.0f)),
 		diffuse, toonNL));

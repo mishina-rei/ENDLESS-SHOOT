@@ -25,7 +25,7 @@ public:
 	void Draw();
 	void Uninit();
 
-	// æ¬¡ã®ã‚·ãƒ¼ãƒ³ã‚’è¨­å®š
+	// Ÿ‚ÌƒV[ƒ“‚ğİ’è
 	template <class T>
 	void SetScene() { nextScene = new T(); }
 
@@ -33,7 +33,7 @@ private:
 
 	SceneManager();
 
-	// ã‚·ãƒ¼ãƒ³å¤‰ãˆã‚‹
+	// ƒV[ƒ“•Ï‚¦‚é
 	void ChangeScene();
 
 
@@ -48,5 +48,5 @@ inline void SceneManager::Init()
 	currentScene = pScene;
 	nextScene = nullptr;
 	currentScene->Init();
-	currentScene->ExecuteCommands(); // åˆæœŸåŒ–æ™‚ã«æºœã¾ã£ãŸã‚³ãƒãƒ³ãƒ‰ã‚’å®Ÿè¡Œ
+	currentScene->ExecuteCommands(); // ‰Šú‰»‚É—­‚Ü‚Á‚½ƒRƒ}ƒ“ƒh‚ğÀs
 }
