@@ -73,6 +73,68 @@ namespace ECS
             }
         }
 
+        // コンポーネント追加
+        template <typename... Args>
+        void AddComponents(EntityID id, Args... args)
+        {
+            EntityRecord& record = entityIndex[id];
+            auto oldArch = record.archetype;
+
+            // 新しいシグネチャを作成
+            Signature newSig = oldArch->signature;
+
+            // ラムダ式を定義（1要素分の処理）
+            // アーキタイプコンポーネントはSignatureに記録する
+            // スパースセットコンポーネントはそのまま追加する
+            auto AddSingle = [&](auto& arg) {
+                using T = std::remove_reference_t<decltype(arg)>; // 型Tを抽出
+
+                ComponentTypeID typeId = ComponentRegistry::GetID<T>();
+                if (structuralTypes.count(typeId)) {
+                    // 既に追加されていたらreturn 
+                    for (auto t : newSig) if (t == typeId) return;
+
+                    AddToSignature(newSig, typeId);
+                }
+                else {
+                    AddToSparse<T>(id, arg, typeId);
+                }
+            };
+
+            // 畳み込み式でラムダを呼び出す
+            (AddSingle(args), ...); 
+
+            // 新アーキタイプ取得or作成
+            auto newArch = GetOrCreateArchetype(newSig);
+
+            // データ移行
+            MigrateEntity(id, record, oldArch, newArch);
+
+            // ラムダ式を定義（1要素分の処理）
+            // アーキタイプコンポーネントは新しいアーキタイプにデータをセットする
+            // スパースセットコンポーネントは処理しない
+            auto SetData = [&](auto& arg) {
+                using T = std::remove_reference_t<decltype(arg)>; // 型Tを抽出
+
+                ComponentTypeID typeId = ComponentRegistry::GetID<T>();
+
+                // アーキタイプに格納しないコンポーネントは飛ばす
+                if (!structuralTypes.count(typeId))return;
+
+                // 新しいコンポーネント用の配列がなければセット
+                if (newArch->columns.find(typeId) == newArch->columns.end()) {
+                    newArch->columns[typeId] = std::make_shared<ComponentArray<T>>();
+                }
+                auto col = std::static_pointer_cast<ComponentArray<T>>(newArch->columns[typeId]);
+
+                // データ格納
+                if (col->data.size() <= record.index) col->data.resize(record.index + 1);
+                col->data[record.index] = arg;
+            };
+
+            (SetData(args), ...);
+        }
+
         // コンポーネント削除
         template <typename T>
         void RemoveComponent(EntityID id) 

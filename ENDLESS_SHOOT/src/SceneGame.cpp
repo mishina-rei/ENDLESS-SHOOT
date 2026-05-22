@@ -52,7 +52,6 @@ void SceneGame::Init()
 		world.AddComponent<Script>(entity, script);
 	}
 
-	// ?G???e?B?e?B???
 	{
 		// 敵キャラクター
 		ECS::EntityID entity = world.CreateEntity();
@@ -70,13 +69,13 @@ void SceneGame::Init()
 		BoxCollider enemyCol(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 2.0f, 1.0f), Quaternion::Identity());
 		enemyCol.tag = CollisionTag::ENEMY;
 		enemyCol.isStatic = false; // 衝突イベントを受け取るため
-		world.AddComponent<BoxCollider>(entity, enemyCol);
+		world.AddComponents<BoxCollider, EnemyTag>(entity, enemyCol, EnemyTag());
 
 		Script enemyScript;
 		enemyScript.Bind<Enemy>();
 		world.AddComponent<Script>(entity, enemyScript);
 
-		world.AddComponent<EnemyTag>(entity, EnemyTag());
+		//world.AddComponent<EnemyTag>(entity, EnemyTag());
 
 		Rigidbody rb;
 		world.AddComponent<Rigidbody>(entity, rb);
