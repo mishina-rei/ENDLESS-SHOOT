@@ -16,7 +16,7 @@ HRESULT MeshBuffer::Create(const Description& desc)
 {
 	HRESULT hr = E_FAIL;
 
-	// ???_?o?b?t?@??
+	// 頂点バッファ作成
 	hr = CreateVertexBuffer(desc.pVtx, desc.vtxSize, desc.vtxCount, desc.isWrite);
 	if (FAILED(hr)) { return hr; }
 

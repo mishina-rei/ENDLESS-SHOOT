@@ -7,7 +7,7 @@
 
 class ShaderList
 {
-	// ???`
+	// シェーダーの種類
 public:
 	enum VSKind
 	{
@@ -35,11 +35,11 @@ public:
 	static void Init();
 	static void Uninit();
 
-	// ?V?F?[?_?[???
+	// シェーダーの取得
 	static VertexShader* GetVS(VSKind vs);
 	static PixelShader* GetPS(PSKind ps);
 
-	// ???o?b?t?@?????
+	// 定数バッファの設定
 	static void SetWVP(DirectX::XMFLOAT4X4* wvp);
 	static void SetBones(DirectX::XMFLOAT4X4* bones200);
 	static void SetMaterial(const Model::Material& material);

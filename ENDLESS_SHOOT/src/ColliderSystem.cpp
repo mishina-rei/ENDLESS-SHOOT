@@ -256,7 +256,7 @@ double ColliderSystem::GetProjectionRadius(const Vector3 scale, const Vector3 ax
 
 bool ColliderSystem::CheckCollisionOBB(ObbData data, ObbData otherData, Vector3* pMtv)
 {
-    // 3. 中心間のベクトル
+    // 中心間のベクトル
     Vector3 T = otherData.pos - data.pos;
 
     // 軸リスト作る
@@ -272,7 +272,7 @@ bool ColliderSystem::CheckCollisionOBB(ObbData data, ObbData otherData, Vector3*
     float minOverlap = FLT_MAX; // 最小の重なり量
     Vector3 mtvAxis;            // 最小の重なりが発生した軸
 
-    // 4. すべての分離軸候補でテストを実行
+    // すべての分離軸候補でテストを実行
     // とりあえず6軸でチェック
     for (int i = 0; i < 6; ++i)
     {
@@ -284,17 +284,17 @@ bool ColliderSystem::CheckCollisionOBB(ObbData data, ObbData otherData, Vector3*
         }
         L = L.Normalized(); // 軸を正規化
 
-        // (1) 2つのOBBの中心間の距離を、軸Lに射影
+        // 2つのOBBの中心間の距離を、軸Lに射影
         double distance = std::abs(Dot(T, L));
 
-        // (2) 2つのOBBの射影半径の合計
+        // 2つのOBBの射影半径の合計
         double r = GetProjectionRadius(data.scale, L, data.axis);
         double otherR = GetProjectionRadius(otherData.scale, L, otherData.axis);
 
         // 判定の重なり量
         double overlap = r + otherR - distance;
 
-        // (3) 判定
+        // 判定
         if (overlap <= 0) {
             // 分離軸が見つかった！ (隙間がある)
             // この時点で衝突していないことが確定
@@ -329,19 +329,19 @@ bool ColliderSystem::CheckCollisionOBB(ObbData data, ObbData otherData, Vector3*
         }
         L = L.Normalized(); // 軸を正規化
 
-        // (1) 2つのOBBの中心間の距離を、軸Lに射影
+        // 2つのOBBの中心間の距離を、軸Lに射影
         double distance = std::abs(Dot(T, L));
 
-        // (2) 2つのOBBの射影半径の合計
+        // 2つのOBBの射影半径の合計
         double r = GetProjectionRadius(data.scale, L, data.axis);
         double otherR = GetProjectionRadius(otherData.scale, L, otherData.axis);
 
         // 判定の重なり量
         double overlap = r + otherR - distance;
 
-        // (3) 判定
+        // 判定
         if (overlap <= 0) {
-            // 分離軸が見つかった！ (隙間がある)
+            // 分離軸が見つかった(隙間がある)
             // この時点で衝突していないことが確定
             return false;
         }
@@ -357,10 +357,10 @@ bool ColliderSystem::CheckCollisionOBB(ObbData data, ObbData otherData, Vector3*
     // めり込み許容値を適用
     minOverlap = std::max<float>(0.0f, minOverlap - PENETRATION_SLOP);
 
-    // (1) MTVの計算
+    // MTVの計算
     *pMtv = mtvAxis * minOverlap;
         
-    // (2) MTVの方向を補正する（重要！）
+    // MTVの方向を補正する
     // MTVは「AをBから押し出す」方向でなければならない。
     // AからBへのベクトル(T)と、mtvAxis の向きが逆（内積が負）なら、MTVを反転させる
     if (Dot(T, mtvAxis) >= 0) {

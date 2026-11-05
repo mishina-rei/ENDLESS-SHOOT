@@ -16,7 +16,7 @@ public:
 private:
 	float hp = 3;
 	float maxHp = 3;
-	float speed; // gG????g?e?gx
+	float speed;				// ˆÚ“®‘¬“x
 	float damageTimer = 0.0f;
 
 	enum class State {

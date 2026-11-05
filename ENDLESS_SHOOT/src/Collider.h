@@ -20,11 +20,11 @@ enum class CollisionTag
 
 struct BoxCollider
 {
-	Vector3 center = { 0.0f, 0.0f, 0.0f };	    // ???[?J?????W???I?t?Z?b?g
-	Vector3 size = { 1.0f, 1.0f, 1.0f };	    // Box?????T?C?Y
-    Quaternion rotation = Quaternion::Identity();	// ???[?J?????W?????]
-	bool isTrigger = false;					    // ?????????????C?x???g????????????
-    bool isStatic = true;                       // ??I?????I??
+	Vector3 center = { 0.0f, 0.0f, 0.0f };	    // ローカル座標からのオフセット
+	Vector3 size = { 1.0f, 1.0f, 1.0f };	    // Boxのサイズ
+    Quaternion rotation = Quaternion::Identity();	// ローカル座標の回転
+	bool isTrigger = false;					    // 物理演算はせず衝突イベントのみ発生させるか
+    bool isStatic = true;                       // 静的オブジェクト（動かないオブジェクト）か
     CollisionTag tag = CollisionTag::NONE;   // 識別用タグ
 
     BoxCollider(){}
@@ -41,7 +41,7 @@ struct BoxCollider
 	}
 };
 
-// ?????????v?Z?p?\????
+// 衝突判定計算用の構造体
 struct Axis3
 {
     Vector3 x;

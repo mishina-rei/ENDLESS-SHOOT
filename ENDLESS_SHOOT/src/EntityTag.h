@@ -2,8 +2,8 @@
  * @file   EntityTag.h
  * @brief  Entity区別用のタグ
  *
- * @author
- * @date
+ * @author 三品怜
+ * @date   2026/1/10
  *********************************************************************/
 #pragma once
 

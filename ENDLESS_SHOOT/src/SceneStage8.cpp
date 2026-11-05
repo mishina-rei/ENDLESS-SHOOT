@@ -68,7 +68,7 @@ void SceneStage8::Init()
 		EnemyGenerator::Create(world, Vector3(x, 1.0f, z));
 	}
 
-	// --- áŠQ•¨ (ƒ‰ƒ“ƒ_ƒ€‚È’Œ‚ÌX) ---
+	// --- áŠQ•¨ (ƒ‰ƒ“ƒ_ƒ€‚È’Œ) ---
 	auto CreatePillar = [&](Vector3 pos) {
 		ECS::EntityID entity = world.CreateEntity();
 		Transform transform;
