@@ -1,3 +1,4 @@
+#include "StageBackground.h"
 #include "SceneStage11.h"
 #include "Geometory.h"
 #include "Vector.h"
@@ -130,4 +131,5 @@ void SceneStage11::Init()
 	CreateWall(Vector3(FLOOR_SCALE_X * 0.5f + 0.5f, -0.5f + STAGE_Y * 0.5f, 0.0f), Vector3(1.0f, STAGE_Y, FLOOR_SCALE_X));
 	CreateWall(Vector3(-(FLOOR_SCALE_X * 0.5f + 0.5f), -0.5f + STAGE_Y * 0.5f, 0.0f), Vector3(1.0f, STAGE_Y, FLOOR_SCALE_X));
 	CreateWall(Vector3(0.0f, -0.5f + STAGE_Y, 0.0f), Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z));
+	StageBackground::Create(world);
 }

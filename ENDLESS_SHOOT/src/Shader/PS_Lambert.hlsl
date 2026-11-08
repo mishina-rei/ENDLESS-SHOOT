@@ -63,12 +63,15 @@ float4 main(PS_IN pin) : SV_TARGET
 	// lightDirはfloat4なので、xyz成分のみを取り出して正規化するのが安全
     float3 L = normalize(lightDir.xyz);
     float dotNL = saturate(-dot(N, L));
-    float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb ;
+    float3 diffuse = objDiffuse.rgb * lightDiffuse.rgb;
     float3 ambient = objAmbient.rgb * lightDiffuse.rgb + float3(0.2f, 0.2f, 0.2f);  // 暗すぎるから足す
     float3 specular = objSpecular.rgb * lightDiffuse.rgb;
     
+    // ディレクショナルライトの影を弱くする
+    float shadowDirLight = dotNL * 0.5f + 0.5f;
+    
 	// 本来のLambert拡散反射（思った表現が出来なかったので採用せず
-    color.rgb *= saturate(diffuse * dotNL + ambient);
+    color.rgb *= saturate(diffuse * shadowDirLight + ambient);
     
 	// 本来なら必要ない鏡面反射、Lambert向けに若干だけ適用
     color.rgb += specular * pow(saturate(dotNL), max(0.01f, objSpecular.a) * 0.5f) * 0.5f;

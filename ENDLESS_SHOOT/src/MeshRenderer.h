@@ -6,15 +6,19 @@
 
 struct MeshRenderer
 {
-	std::shared_ptr<Model> pModel = nullptr;	// ƒ‚ƒfƒ‹ƒf[ƒ^
-	bool isVisible = true;						// •\¦‚·‚é‚©‚Ç‚¤‚©
-	Vector4 color = { 1.0f, 1.0f, 1.0f, 1.0f };	// F
+	std::shared_ptr<Model> pModel = nullptr;	// ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿
+	bool isVisible = true;						// è¡¨ç¤ºã™ã‚‹ã‹ã©ã†ã‹
+	Vector4 color = { 1.0f, 1.0f, 1.0f, 1.0f };	// è‰²
 
 	MeshRenderer()
 	{
 		pModel = std::make_shared<Model>();
 	}
 	MeshRenderer(Model* _pModel, bool visible = true)
+		: pModel(_pModel), isVisible(visible)
+	{
+	}
+	MeshRenderer(std::shared_ptr<Model> _pModel, bool visible = true)
 		: pModel(_pModel), isVisible(visible)
 	{
 	}

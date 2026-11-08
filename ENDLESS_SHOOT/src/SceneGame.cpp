@@ -1,3 +1,4 @@
+#include "StageBackground.h"
 #include "SceneGame.h"
 #include "Geometory.h"
 #include "Vector.h"
@@ -195,17 +196,5 @@ void SceneGame::Init()
 		world.AddComponent<BoxCollider>(entity, boxCollider);
 	}
 
-	{
-		// タワー表示テスト
-		ECS::EntityID entity = world.CreateEntity();
-		Transform transform;
-		transform.position = Vector3(0.0f, -0.5f, 0.0f);
-		world.AddComponent<Transform>(entity, transform);
-
-		Model* pModel = new Model();
-		pModel->Load("Assets/Model/building/SM_BG_Building01.fbx");
-		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
-		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
-		world.AddComponent<MeshRenderer>(entity, MeshRenderer(pModel));
-	}
+	StageBackground::Create(world);
 }

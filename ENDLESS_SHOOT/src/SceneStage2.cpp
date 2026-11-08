@@ -1,3 +1,4 @@
+#include "StageBackground.h"
 #include "SceneStage2.h"
 #include "Geometory.h"
 #include "Vector.h"
@@ -336,4 +337,5 @@ void SceneStage2::Init()
 		boxCollider.isStatic = true;
 		world.AddComponent<BoxCollider>(entity, boxCollider);
 	}
+	StageBackground::Create(world);
 }

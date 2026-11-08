@@ -35,3 +35,5 @@ Assets/
 # OS固有 (Windows)
 Thumbs.db
 desktop.ini
+*.md
+*.obj
