@@ -25,6 +25,10 @@ void ShaderList::Init()
 	MakeFogPS();
 	MakeShadowPS();
 
+
+	m_pPS[PS_SKY] = new PixelShader();
+	m_pPS[PS_SKY]->Load(SHADER(PS_Sky));
+
 	DirectX::XMFLOAT4X4 mat[250];
 	for (int i = 0; i < 250; ++i)
 	{

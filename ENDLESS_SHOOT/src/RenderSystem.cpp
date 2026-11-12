@@ -10,6 +10,7 @@
 #include <vector>
 #include <algorithm>
 #include "DirectX.h"
+#include "SkyDome.h"
 
 // シャドウマップ解像度
 const int SHADOW_MAP_WIDTH = 2048;
@@ -249,6 +250,47 @@ void RenderSystem::Draw(ECS::World* world)
 	vp.MaxDepth = 1.0f;
 
 	GetContext()->RSSetViewports(1, &vp);
+
+	// スカイドームの描画-----------------------------------------------------
+	DirectX::XMFLOAT4X4 skyDomeView = CameraSystem::GetView(false);
+	DirectX::XMFLOAT4X4 skyDomeProj = CameraSystem::GetProjection();
+	
+	world->ForEach<SkyDome>([&](ECS::EntityID id, SkyDome& skyDome) {
+		if (!skyDome.isVisible || !skyDome.pModel) return;
+
+		// ワールド行列計算
+		DirectX::XMMATRIX S = DirectX::XMMatrixScalingFromVector(Vector3(300.0f,300.0f,300.0f));
+		DirectX::XMMATRIX matWorld = S;
+
+		// シェーダー定数バッファ用に行列セット
+		DirectX::XMFLOAT4X4 wvp[3];
+		DirectX::XMStoreFloat4x4(&wvp[0], DirectX::XMMatrixTranspose(matWorld));
+		wvp[1] = skyDomeView;
+		wvp[2] = skyDomeProj;
+
+		// シェーダー設定
+		ShaderList::SetWVP(wvp);
+
+		SetDepthTest(false);  // 深度テスト無効化
+
+		for (int i = 0; i < skyDome.pModel->GetMeshNum(); ++i) {
+			// モデル内のメッシュを描画
+			Model::Mesh Mesh = *(skyDome.pModel->GetMesh(i));
+			// メッシュに割り当てられているマテリアルを取得
+			Model::Material	material = *skyDome.pModel->GetMaterial(Mesh.materialID);
+			// マテリアル情報を調整してからSetMaterialで送信する
+
+			// シェーダーへマテリアル送信
+			ShaderList::SetMaterial(material);
+
+			// モデルを描画
+			skyDome.pModel->Draw(i);
+		}
+		});
+
+	SetDepthTest(true);  // 深度テスト有効化
+
+	// スカイドームの描画終了-------------------------------------------------
 
 	// 作成したシャドウマップをテクスチャとしてセット
 	ShaderList::SetShadow(m_pShadowMapSRV.Get(), lightBuffer);

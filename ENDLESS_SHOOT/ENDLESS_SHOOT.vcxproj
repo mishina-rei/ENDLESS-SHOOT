@@ -207,7 +207,9 @@
     <ClInclude Include="src\Rigidbody.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SceneGame.h" />
+    <ClInclude Include="src\SkyDome.h" />
     <ClInclude Include="src\StageBackground.h" />
+    <ClInclude Include="src\StageObstacle.h" />
     <ClInclude Include="src\SceneManager.h" />
     <ClInclude Include="src\SceneStage10.h" />
     <ClInclude Include="src\SceneStage11.h" />
@@ -273,6 +275,7 @@
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\SceneGame.cpp" />
     <ClCompile Include="src\StageBackground.cpp" />
+    <ClCompile Include="src\StageObstacle.cpp" />
     <ClCompile Include="src\SceneManager.cpp" />
     <ClCompile Include="src\SceneStage10.cpp" />
     <ClCompile Include="src\SceneStage11.cpp" />
@@ -309,6 +312,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="src\Shader\PS_Shadow.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="src\Shader\PS_Sky.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

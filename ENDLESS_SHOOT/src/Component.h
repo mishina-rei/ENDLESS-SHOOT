@@ -10,5 +10,6 @@
 #include "Collider.h"
 #include "Rigidbody.h"
 #include "SpriteRenderer.h"
+#include "SkyDome.h"
 
 // 他のコンポーネントがあればここに追加

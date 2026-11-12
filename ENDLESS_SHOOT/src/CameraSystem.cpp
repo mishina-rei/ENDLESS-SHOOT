@@ -5,7 +5,7 @@
 
 ECS::EntityID CameraSystem::cameraId = 0;
 
-DirectX::XMFLOAT4X4 CameraSystem::GetView()
+DirectX::XMFLOAT4X4 CameraSystem::GetView(bool usePos)
 {
     ECS::World* world = SceneManager::GetInstance().GetCurrentScene()->GetWorld();
 
@@ -22,6 +22,10 @@ DirectX::XMFLOAT4X4 CameraSystem::GetView()
             pos = transform.position;
             rot = transform.rotation;
         }
+
+        if(!usePos)
+            pos = { 0.0f, 0.0f, 0.0f };
+
         return world->GetComponent<Camera>(cameraId).GetViewMatrix(pos, rot);
     }
 

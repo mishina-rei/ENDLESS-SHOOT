@@ -165,6 +165,9 @@
     <ClInclude Include="src\StageBackground.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\StageObstacle.h">
+      <Filter>ヘッダー ファイル\Application\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\SceneTitle.h">
       <Filter>ヘッダー ファイル\Application\Scene</Filter>
     </ClInclude>
@@ -357,6 +360,9 @@
       <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\StageBackground.cpp">
+      <Filter>ソース ファイル\Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StageObstacle.cpp">
       <Filter>ソース ファイル\Application\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Bullet.cpp">

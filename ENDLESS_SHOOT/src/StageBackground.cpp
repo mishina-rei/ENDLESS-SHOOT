@@ -164,6 +164,9 @@ void StageBackground::Create(ECS::World& world)
 	PlaceProp(pMid,       Vector3( 14.0f, 0.0f, -24.0f),   0.0f);
 	PlaceProp(pMid,       Vector3( 14.0f, 4.0f, -24.0f),   0.0f);
 
+	// 隙間埋める
+	PlaceProp(pWall, Vector3(20.2f, 0.0f, -24.0f), 180.0f);
+
 	// (+X)
 	// --- 第1層（手前） ---
 	// メインタワー（3段重ね: 高さ12m）
@@ -199,6 +202,9 @@ void StageBackground::Create(ECS::World& world)
 	PlaceProp(pWall,      Vector3(24.2f, 0.0f, -14.5f), 270.0f);
 	PlaceProp(pWall,      Vector3(24.2f, 4.0f, -14.5f), 270.0f);
 	PlaceProp(pWall,      Vector3(24.2f, 0.0f,  14.5f), 270.0f);
+
+	// 隙間埋める
+	PlaceProp(pWall, Vector3(24.2f, 0.0f, -21.0f), 270.0f);
 
 	// (-X)
 	// --- 第1層（手前） ---
@@ -261,5 +267,25 @@ void StageBackground::Create(ECS::World& world)
 	PlaceProp(pSkyTower3, Vector3(-24.5f, 0.0f, -24.5f),   0.0f);
 	PlaceProp(pSkyTower3, Vector3(-24.5f, 4.0f, -24.5f),   0.0f);
 	PlaceProp(pSkyTower3, Vector3(-24.5f, 8.0f, -24.5f),   0.0f);
+
+	// 床モデル表示
+	constexpr float FLOOR_Y = -0.2f;
+	auto pFloor = LoadModel("Assets/Model/building/floor.fbx");
+	PlaceProp(pFloor, Vector3(0.0f, FLOOR_Y, 0.0f), 0.0f);
+
+	{
+		// スカイドーム
+		ECS::EntityID entity = world.CreateEntity();
+
+		/*Transform t;
+		t.scale = Vector3(300.0f, 300.0f, 300.0f); 
+		world.AddComponent<Transform>(entity, t);*/
+
+		Model* pModel = new Model();
+		pModel->Load("Assets/Model/sky.fbx");
+		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
+		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_SKY));
+		world.AddComponent<SkyDome>(entity, SkyDome(pModel));
+	}
 }
 }

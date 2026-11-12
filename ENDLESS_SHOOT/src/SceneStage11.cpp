@@ -1,3 +1,4 @@
+#include "StageObstacle.h"
 #include "StageBackground.h"
 #include "SceneStage11.h"
 #include "Geometory.h"
@@ -26,6 +27,7 @@ void SceneStage11::Init()
 	world.RegisterStructural<BoxCollider>();
 	world.RegisterStructural<Rigidbody>();
 	world.RegisterStructural<SpriteRenderer>();
+	world.RegisterStructural<SkyDome>();
 
 	GameManager::SetState(GameManager::PLAY);
 	GameManager::AdvanceStage();
@@ -68,23 +70,7 @@ void SceneStage11::Init()
 
 	// --- è·äQï® (í òHÇçÏÇÈï«) ---
 	auto CreateBlock = [&](Vector3 pos, Vector3 scale) {
-		ECS::EntityID entity = world.CreateEntity();
-		Transform transform;
-		transform.position = pos;
-		transform.scale = scale;
-		world.AddComponent<Transform>(entity, transform);
-
-		BoxCollider boxCollider(Vector3(0.0f, 0.0f, 0.0f), scale, Quaternion::Identity());
-		boxCollider.isStatic = true;
-		world.AddComponent<BoxCollider>(entity, boxCollider);
-
-		Model* pModel = new Model();
-		pModel->Load("Assets/Model/box.fbx");
-		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
-		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
-		MeshRenderer mr(pModel);
-		mr.color = Vector4(0.4f, 0.4f, 0.4f, 1.0f);
-		world.AddComponent<MeshRenderer>(entity, mr);
+		StageObstacle::Create(world, pos, scale, StageObstacle::Type::Auto);
 	};
 
 	// ècÇ…í∑Ç¢ï«ÇîzíuÇµÇƒí òHÇçÏÇÈ
@@ -104,15 +90,10 @@ void SceneStage11::Init()
 		transform.scale = Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z);
 		world.AddComponent<Transform>(entity, transform);
 
-		BoxCollider boxCollider(Vector3(0.0f, -0.5f, 0.0f), Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z), Quaternion::Identity());
+		BoxCollider boxCollider(Vector3(0.0f, 0.0f, 0.0f), Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z), Quaternion::Identity());
 		boxCollider.isStatic = true;
 		world.AddComponent<BoxCollider>(entity, boxCollider);
 
-		Model* pModel = new Model();
-		pModel->Load("Assets/Model/box.fbx");
-		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
-		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
-		world.AddComponent<MeshRenderer>(entity, MeshRenderer(pModel));
 	}
 
 	auto CreateWall = [&](Vector3 pos, Vector3 scale) {

@@ -24,6 +24,7 @@ public:
 		PS_TOON, // SetMaterial, SetLight
 		PS_FOG, // SetMaterial, SetLight,SetFog
 		PS_SHADOW,
+		PS_SKY,	// スカイドーム用
 		PS_KIND_MAX
 	};
 
