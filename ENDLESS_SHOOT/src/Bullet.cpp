@@ -24,15 +24,15 @@ void Bullet::OnCollisionEnter(ECS::EntityID other)
        collider.tag != CollisionTag::BULLET && 
        !collider.isTrigger)
     {
-        // ?????????????????
+        // 敵に当たった場合の処理
         if (collider.tag == CollisionTag::ENEMY)
         {
-            // ???????
+            // ヒットエフェクトの再生
             auto& t = GetComponent<Transform>();
             Effekseer::Handle handle = EffekseerManager::Play("Assets/Effect/spark.efkefc", t.position);
             EffekseerManager::SetScale(handle,Vector3 (0.1f,0.1f,0.1f));
 
-            // ??????+Y?????????????????
+            // 弾の進行方向の逆向きにエフェクトを回転させる
             if (world->HasComponent<Rigidbody>(entityId))
             {
                 auto& rb = GetComponent<Rigidbody>();

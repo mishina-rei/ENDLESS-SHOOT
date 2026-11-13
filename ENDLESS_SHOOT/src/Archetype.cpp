@@ -1,3 +1,5 @@
+//#include "Engine_pch.h"
+
 #include "Archetype.h"
 
 size_t ECS::Archetype::AddEntity(EntityID id)
@@ -11,22 +13,22 @@ std::pair<bool, ECS::EntityID> ECS::Archetype::RemoveEntity(size_t index)
     size_t lastIndex = entities.size() - 1;
     EntityID movedEntity = entities[lastIndex];
 
-    // ‘SƒJƒ‰ƒ€‚ÅíœÀs
+    // å…¨ã‚«ãƒ©ãƒ ã§å‰Šé™¤å®Ÿè¡Œ
     for (auto& pair : columns) 
     {
         pair.second->RemoveSwap(index);
     }
 
-    // IDƒŠƒXƒg‚Ìíœ
+    // IDãƒªã‚¹ãƒˆã®å‰Šé™¤
     if (index != lastIndex) 
     {
         entities[index] = entities[lastIndex];
         entities.pop_back();
-        return { true, movedEntity }; // ––”ö‚ªˆÚ“®‚µ‚Ä‚«‚½
+        return { true, movedEntity }; // æœ«å°¾ãŒç§»å‹•ã—ã¦ããŸ
     }
     else 
     {
         entities.pop_back();
-        return { false, 0 }; // ––”ö‚ªÁ‚¦‚½‚¾‚¯
+        return { false, 0 }; // æœ«å°¾ãŒæ¶ˆãˆãŸã ã‘
     }
 }

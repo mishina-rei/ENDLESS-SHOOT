@@ -17,11 +17,11 @@
 HRESULT Init(HWND hWnd, UINT width, UINT height)
 {
 	HRESULT hr;
-	// DirectX??????
+	// DirectXの初期化
 	hr = InitDirectX(hWnd, width, height, false);
 	if (FAILED(hr)) { return hr; }
 
-	// ??????
+	// 各種システムの初期化
 	Geometory::Init();
 	Sprite::Init();
 	InitInput(hWnd);
@@ -57,7 +57,7 @@ void Draw()
 {
 	BeginDrawDirectX();
 
-	// Debug????s??
+	// デバッグ用の描画
 #ifdef _DEBUG
 
 	DirectX::XMFLOAT4 lineColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -79,7 +79,7 @@ void Draw()
 		pos[0].z = pos[1].z = -grid;
 		Geometory::AddLine(pos[0], pos[1], lineColor);
 	}
-	// ????????
+	// 座標軸の描画
 	Geometory::AddLine(DirectX::XMFLOAT3(0,0,0), DirectX::XMFLOAT3(size,0,0), DirectX::XMFLOAT4(1,0,0,1));
 	Geometory::AddLine(DirectX::XMFLOAT3(0,0,0), DirectX::XMFLOAT3(0,size,0), DirectX::XMFLOAT4(0,1,0,1));
 	Geometory::AddLine(DirectX::XMFLOAT3(0,0,0), DirectX::XMFLOAT3(0,0,size), DirectX::XMFLOAT4(0,0,1,1));
@@ -88,7 +88,7 @@ void Draw()
 
 	Geometory::DrawLines();
 
-	// ?J????????
+	// カメラの操作
 	static bool camAutoSwitch = false;
 	static bool camUpDownSwitch = true;
 	static float camAutoRotate = 1.0f;
@@ -109,7 +109,7 @@ void Draw()
 		sinf(camAutoRotate) * 5.0f,
 		0.0f);
 
-	// ?s???Z?b?g
+	// 行列のセット
 	DirectX::XMFLOAT4X4 mat[2];
 	DirectX::XMStoreFloat4x4(&mat[0], DirectX::XMMatrixTranspose(
 		DirectX::XMMatrixLookAtLH(

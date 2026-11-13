@@ -1,3 +1,5 @@
+#include "StageObstacle.h"
+#include "StageBackground.h"
 #include "SceneStage8.h"
 #include "Geometory.h"
 #include "Vector.h"
@@ -25,6 +27,7 @@ void SceneStage8::Init()
 	world.RegisterStructural<BoxCollider>();
 	world.RegisterStructural<Rigidbody>();
 	world.RegisterStructural<SpriteRenderer>();
+	world.RegisterStructural<SkyDome>();
 
 	GameManager::SetState(GameManager::PLAY);
 	GameManager::AdvanceStage();
@@ -68,25 +71,9 @@ void SceneStage8::Init()
 		EnemyGenerator::Create(world, Vector3(x, 1.0f, z));
 	}
 
-	// --- 障害物 (ランダムな柱の森) ---
+	// --- 障害物 (ランダムな柱) ---
 	auto CreatePillar = [&](Vector3 pos) {
-		ECS::EntityID entity = world.CreateEntity();
-		Transform transform;
-		transform.position = pos;
-		transform.scale = Vector3(1.5f, 6.0f, 1.5f);
-		world.AddComponent<Transform>(entity, transform);
-
-		BoxCollider boxCollider(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.5f, 6.0f, 1.5f), Quaternion::Identity());
-		boxCollider.isStatic = true;
-		world.AddComponent<BoxCollider>(entity, boxCollider);
-
-		Model* pModel = new Model();
-		pModel->Load("Assets/Model/box.fbx");
-		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
-		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
-		MeshRenderer mr(pModel);
-		mr.color = Vector4(0.6f, 0.6f, 0.65f, 1.0f);
-		world.AddComponent<MeshRenderer>(entity, mr);
+		StageObstacle::Create(world, pos, Vector3(1.5f, 6.0f, 1.5f), StageObstacle::Type::Pillar);
 	};
 
 	// ランダムに柱を配置
@@ -106,15 +93,10 @@ void SceneStage8::Init()
 		transform.scale = Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z);
 		world.AddComponent<Transform>(entity, transform);
 
-		BoxCollider boxCollider(Vector3(0.0f, -0.5f, 0.0f), Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z), Quaternion::Identity());
+		BoxCollider boxCollider(Vector3(0.0f, 0.0f, 0.0f), Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z), Quaternion::Identity());
 		boxCollider.isStatic = true;
 		world.AddComponent<BoxCollider>(entity, boxCollider);
 
-		Model* pModel = new Model();
-		pModel->Load("Assets/Model/box.fbx");
-		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
-		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
-		world.AddComponent<MeshRenderer>(entity, MeshRenderer(pModel));
 	}
 
 	auto CreateWall = [&](Vector3 pos, Vector3 scale) {
@@ -133,4 +115,5 @@ void SceneStage8::Init()
 	CreateWall(Vector3(FLOOR_SCALE_X * 0.5f + 0.5f, -0.5f + STAGE_Y * 0.5f, 0.0f), Vector3(1.0f, STAGE_Y, FLOOR_SCALE_X));
 	CreateWall(Vector3(-(FLOOR_SCALE_X * 0.5f + 0.5f), -0.5f + STAGE_Y * 0.5f, 0.0f), Vector3(1.0f, STAGE_Y, FLOOR_SCALE_X));
 	CreateWall(Vector3(0.0f, -0.5f + STAGE_Y, 0.0f), Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z));
+	StageBackground::Create(world);
 }

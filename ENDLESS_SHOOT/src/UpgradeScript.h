@@ -11,9 +11,9 @@ public:
 
 private:
 
-	int cursor = 0;
-	int upgrades[3];
-	ECS::EntityID cursorId = 0;
-	soundHandle cursorSE = INVALID_SOUND_HANDLE;
-	soundHandle decideSE = INVALID_SOUND_HANDLE;
+	int cursor = 0;									// アップグレードを選択するカーソルの位置
+	int upgrades[3];								// 表示するアップグレードの番号
+	ECS::EntityID cursorId = 0;						// カーソル用のエンティティID
+	soundHandle cursorSE = INVALID_SOUND_HANDLE;	// カーソル移動効果音
+	soundHandle decideSE = INVALID_SOUND_HANDLE;	// 決定音
 };

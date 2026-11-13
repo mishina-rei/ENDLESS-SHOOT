@@ -5,7 +5,7 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
 //----------
-// ???{?N???X
+// 基本クラス
 Shader::Shader(Kind kind)
 	: m_kind(kind)
 {
@@ -23,26 +23,26 @@ HRESULT Shader::Load(const char* pFileName)
 {
 	HRESULT hr = E_FAIL;
 
-	// ?t?@?C??????????
+	// ファイルオープン
 	FILE* fp;
 	fopen_s(&fp, pFileName, "rb");
 	if (!fp) { return hr; }
 
-	// ?t?@?C????T?C?Y????
+	// ファイルサイズ取得
 	int fileSize = 0;
 	fseek(fp, 0, SEEK_END);
 	fileSize = ftell(fp);
 
-	// ?????????????
+	// データ読み込み
 	fseek(fp, 0, SEEK_SET);
 	char* pData = new char[fileSize];
 	fread(pData, fileSize, 1, fp);
 	fclose(fp);
 
-	// ?V?F?[?_?[??
+	// シェーダー生成
 	hr = Make(pData, fileSize);
 	
-	// ?I??????
+	// 終了処理
 	if (pData) { delete[] pData; }
 	return hr;
 }
@@ -62,7 +62,7 @@ HRESULT Shader::Compile(const char *pCode)
 		"main", pTargetList[m_kind], compileFlag, 0, &pBlob, &error);
 	if (FAILED(hr)) { return hr; }
 
-	// ?V?F?[?_??
+	// シェーダー生成
 	hr = Make(pBlob->GetBufferPointer(), (UINT)pBlob->GetBufferSize());
 	SAFE_RELEASE(pBlob);
 	SAFE_RELEASE(error);
@@ -111,40 +111,40 @@ HRESULT Shader::Make(void* pData, UINT size)
 	HRESULT hr;
 	ID3D11Device* pDevice = GetDevice();
 
-	// ????p????t???N?V??????
+	// リフレクションの取得
 	ID3D11ShaderReflection* pReflection;
 	hr = D3DReflect(pData, size, IID_PPV_ARGS(&pReflection));
 	if (FAILED(hr)) { return hr; }
 
-	// ???o?b?t?@??
+	// 定数バッファ情報
 	D3D11_SHADER_DESC shaderDesc;
 	pReflection->GetDesc(&shaderDesc);
 	m_pBuffers.resize(shaderDesc.ConstantBuffers, nullptr);
 	for (UINT i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
-		// ?V?F?[?_?[????o?b?t?@????????擾
+		// シェーダーの定数バッファ情報を取得
 		D3D11_SHADER_BUFFER_DESC shaderBufDesc;
 		ID3D11ShaderReflectionConstantBuffer* cbuf = pReflection->GetConstantBufferByIndex(i);
 		cbuf->GetDesc(&shaderBufDesc);
 
-		// ???????o?b?t?@?????
+		// 定数バッファの設定
 		D3D11_BUFFER_DESC bufDesc = {};
 		bufDesc.ByteWidth = shaderBufDesc.Size;
 		bufDesc.Usage = D3D11_USAGE_DEFAULT;
 		bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-		// ?o?b?t?@???
+		// バッファ生成
 		hr = pDevice->CreateBuffer(&bufDesc, nullptr, &m_pBuffers[i]);
 		if (FAILED(hr)) { return hr; }
 	}
-	// ?e?N?X?`???????
+	// テクスチャ設定
 	m_pTextures.resize(shaderDesc.TextureNormalInstructions, nullptr);
 
 	return MakeShader(pData, size);
 }
 
 //----------
-// ???_?V?F?[?_
+// 頂点シェーダー
 VertexShader::VertexShader()
 	: Shader(Shader::Vertex)
 	, m_pVS(nullptr)
@@ -174,14 +174,14 @@ HRESULT VertexShader::MakeShader(void* pData, UINT size)
 	HRESULT hr;
 	ID3D11Device* pDevice = GetDevice();
 	
-	// ?V?F?[?_?[??
+	// シェーダー生成
 	hr = pDevice->CreateVertexShader(pData, size, NULL, &m_pVS);
 	if(FAILED(hr)) { return hr; }
 
 	/*
-	?V?F?[?_??????V?F?[?_???t???N?V???????????C???v?b?g???C?A?E?g???擾
-	?Z?}???e?B?N?X??z?u????????q????
-	????q???o?^?ρ?????p?A???????V?K??
+	シェーダーのリフレクションからインプットレイアウトを取得
+	セマンティクス名などを元にして動的に生成する
+	フォーマットはシグネチャのマスク等から判定
 	https://blog.techlab-xe.net/dxc-shader-reflection/
 	*/
 
@@ -254,7 +254,7 @@ HRESULT VertexShader::MakeShader(void* pData, UINT size)
 }
 
 //----------
-// ?s?N?Z???V?F?[?_
+// ピクセルシェーダー
 PixelShader::PixelShader()
 	: Shader(Shader::Pixel)
 	, m_pPS(nullptr)

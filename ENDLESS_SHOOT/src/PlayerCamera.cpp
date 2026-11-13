@@ -7,7 +7,7 @@
 static constexpr float MAX_PITCH = 89.0f;
 static constexpr float MIN_PITCH = -50.0f;
 
-static constexpr float SENSITIVITY = 0.05;
+static constexpr float SENSITIVITY = 0.05f;
 
 PlayerCamera::PlayerCamera(ECS::EntityID _playerId):
 	playerId(_playerId),

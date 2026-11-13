@@ -7,7 +7,7 @@
 
 class ShaderList
 {
-	// ???`
+	// シェーダーの種類
 public:
 	enum VSKind
 	{
@@ -24,6 +24,7 @@ public:
 		PS_TOON, // SetMaterial, SetLight
 		PS_FOG, // SetMaterial, SetLight,SetFog
 		PS_SHADOW,
+		PS_SKY,	// スカイドーム用
 		PS_KIND_MAX
 	};
 
@@ -35,11 +36,11 @@ public:
 	static void Init();
 	static void Uninit();
 
-	// ?V?F?[?_?[???
+	// シェーダーの取得
 	static VertexShader* GetVS(VSKind vs);
 	static PixelShader* GetPS(PSKind ps);
 
-	// ???o?b?t?@?????
+	// 定数バッファの設定
 	static void SetWVP(DirectX::XMFLOAT4X4* wvp);
 	static void SetBones(DirectX::XMFLOAT4X4* bones200);
 	static void SetMaterial(const Model::Material& material);

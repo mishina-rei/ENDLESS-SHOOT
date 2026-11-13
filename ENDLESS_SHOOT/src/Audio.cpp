@@ -1,3 +1,5 @@
+//#include "Engine_pch.h"
+
 #include "Audio.h"
 #include <xaudio2.h>
 #include <vector>
@@ -6,7 +8,7 @@
 
 #pragma comment(lib, "xaudio2.lib")
 
-// ‰¹ºƒf[ƒ^ŠÇ——p\‘¢‘Ì
+// éŸ³å£°ãƒ‡ãƒ¼ã‚¿ç®¡ç†ç”¨æ§‹é€ ä½“
 struct AudioData
 {
 	WAVEFORMATEX wfx;
@@ -18,23 +20,23 @@ static IXAudio2* g_pXAudio2 = nullptr;
 static IXAudio2MasteringVoice* g_pMasteringVoice = nullptr;
 static std::vector<AudioData*> g_audioList;
 
-// WAVƒtƒ@ƒCƒ‹“Ç‚İ‚İƒwƒ‹ƒp[
+// WAVãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ãƒ˜ãƒ«ãƒ‘ãƒ¼
 bool LoadWav(const char* filename, WAVEFORMATEX& wfx, std::vector<BYTE>& buffer)
 {
 	std::ifstream file(filename, std::ios::binary);
 	if (!file.is_open()) return false;
 
-	// RIFFƒ`ƒƒƒ“ƒN“Ç‚İ‚İ
+	// RIFFãƒãƒ£ãƒ³ã‚¯èª­ã¿è¾¼ã¿
 	char chunkId[4];
 	file.read(chunkId, 4);
 	if (strncmp(chunkId, "RIFF", 4) != 0) return false;
 
-	file.seekg(4, std::ios::cur); // ƒtƒ@ƒCƒ‹ƒTƒCƒY‚Í–³‹
+	file.seekg(4, std::ios::cur); // ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºã¯ç„¡è¦–
 
 	file.read(chunkId, 4);
 	if (strncmp(chunkId, "WAVE", 4) != 0) return false;
 
-	// ƒ`ƒƒƒ“ƒN’Tõ
+	// ãƒãƒ£ãƒ³ã‚¯æ¢ç´¢
 	while (file.read(chunkId, 4))
 	{
 		uint32_t chunkSize;
@@ -42,28 +44,28 @@ bool LoadWav(const char* filename, WAVEFORMATEX& wfx, std::vector<BYTE>& buffer)
 
 		if (strncmp(chunkId, "fmt ", 4) == 0)
 		{
-			// fmtƒ`ƒƒƒ“ƒN
+			// fmtãƒãƒ£ãƒ³ã‚¯
 			memset(&wfx, 0, sizeof(WAVEFORMATEX));
 			
-			// ­‚È‚­‚Æ‚àPCMWAVEFORMAT(16byte)•ª‚Í“Ç‚Ş
+			// å°‘ãªãã¨ã‚‚PCMWAVEFORMAT(16byte)åˆ†ã¯èª­ã‚€
 			uint32_t readSize = (chunkSize < sizeof(WAVEFORMATEX)) ? chunkSize : sizeof(WAVEFORMATEX);
 			file.read(reinterpret_cast<char*>(&wfx), readSize);
 
-			// “Ç‚İc‚µ‚ª‚ ‚ê‚ÎƒXƒLƒbƒv
+			// èª­ã¿æ®‹ã—ãŒã‚ã‚Œã°ã‚¹ã‚­ãƒƒãƒ—
 			if (chunkSize > readSize) {
 				file.seekg(chunkSize - readSize, std::ios::cur);
 			}
 		}
 		else if (strncmp(chunkId, "data", 4) == 0)
 		{
-			// dataƒ`ƒƒƒ“ƒN
+			// dataãƒãƒ£ãƒ³ã‚¯
 			buffer.resize(chunkSize);
 			file.read(reinterpret_cast<char*>(buffer.data()), chunkSize);
-			return true; // ƒf[ƒ^‚Ü‚Å“Ç‚ß‚½‚ç¬Œ÷‚Æ‚·‚é
+			return true; // ãƒ‡ãƒ¼ã‚¿ã¾ã§èª­ã‚ãŸã‚‰æˆåŠŸã¨ã™ã‚‹
 		}
 		else
 		{
-			// ‚»‚Ì‘¼‚Ìƒ`ƒƒƒ“ƒN‚ÍƒXƒLƒbƒv
+			// ãã®ä»–ã®ãƒãƒ£ãƒ³ã‚¯ã¯ã‚¹ã‚­ãƒƒãƒ—
 			file.seekg(chunkSize, std::ios::cur);
 		}
 	}
@@ -75,21 +77,21 @@ void InitAudio()
 {
 	HRESULT hr;
 	
-	// COM‰Šú‰»
+	// COMåˆæœŸåŒ–
 	hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
-	// XAudio2ƒGƒ“ƒWƒ“‚Ìì¬
+	// XAudio2ã‚¨ãƒ³ã‚¸ãƒ³ã®ä½œæˆ
 	hr = XAudio2Create(&g_pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	if (FAILED(hr)) return;
 
-	// ƒ}ƒXƒ^[ƒ{ƒCƒX‚Ìì¬
+	// ãƒã‚¹ã‚¿ãƒ¼ãƒœã‚¤ã‚¹ã®ä½œæˆ
 	hr = g_pXAudio2->CreateMasteringVoice(&g_pMasteringVoice);
 	if (FAILED(hr)) return;
 }
 
 void UninitAudio()
 {
-	// ƒ\[ƒXƒ{ƒCƒX‚Ì”jŠü‚Æƒƒ‚ƒŠ‰ğ•ú
+	// ã‚½ãƒ¼ã‚¹ãƒœã‚¤ã‚¹ã®ç ´æ£„ã¨ãƒ¡ãƒ¢ãƒªè§£æ”¾
 	for (auto* data : g_audioList)
 	{
 		if (data->pSourceVoice)
@@ -101,14 +103,14 @@ void UninitAudio()
 	}
 	g_audioList.clear();
 
-	// ƒ}ƒXƒ^[ƒ{ƒCƒX‚Ì”jŠü
+	// ãƒã‚¹ã‚¿ãƒ¼ãƒœã‚¤ã‚¹ã®ç ´æ£„
 	if (g_pMasteringVoice)
 	{
 		g_pMasteringVoice->DestroyVoice();
 		g_pMasteringVoice = nullptr;
 	}
 
-	// XAudio2‚Ì‰ğ•ú
+	// XAudio2ã®è§£æ”¾
 	if (g_pXAudio2)
 	{
 		g_pXAudio2->Release();
@@ -125,14 +127,14 @@ int LoadSound(const char* filename)
 	AudioData* data = new AudioData();
 	data->pSourceVoice = nullptr;
 
-	// WAV“Ç‚İ‚İ
+	// WAVèª­ã¿è¾¼ã¿
 	if (!LoadWav(filename, data->wfx, data->buffer))
 	{
 		delete data;
 		return -1;
 	}
 
-	// ƒ\[ƒXƒ{ƒCƒXì¬
+	// ã‚½ãƒ¼ã‚¹ãƒœã‚¤ã‚¹ä½œæˆ
 	HRESULT hr = g_pXAudio2->CreateSourceVoice(&data->pSourceVoice, &data->wfx);
 	if (FAILED(hr))
 	{
@@ -151,18 +153,18 @@ void Play(int index, bool loop)
 	AudioData* data = g_audioList[index];
 	if (!data->pSourceVoice) return;
 
-	// ƒoƒbƒtƒ@‚Ìİ’è
+	// ãƒãƒƒãƒ•ã‚¡ã®è¨­å®š
 	XAUDIO2_BUFFER buffer = { 0 };
 	buffer.pAudioData = data->buffer.data();
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
 	buffer.AudioBytes = (UINT32)data->buffer.size();
 	buffer.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
 
-	// Ä¶’†‚È‚ç’â~‚µ‚Äƒoƒbƒtƒ@‚ğƒNƒŠƒA
+	// å†ç”Ÿä¸­ãªã‚‰åœæ­¢ã—ã¦ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¯ãƒªã‚¢
 	data->pSourceVoice->Stop();
 	data->pSourceVoice->FlushSourceBuffers();
 
-	// ƒoƒbƒtƒ@‚ğ‘—M‚µ‚ÄÄ¶
+	// ãƒãƒƒãƒ•ã‚¡ã‚’é€ä¿¡ã—ã¦å†ç”Ÿ
 	data->pSourceVoice->SubmitSourceBuffer(&buffer);
 	data->pSourceVoice->Start();
 }

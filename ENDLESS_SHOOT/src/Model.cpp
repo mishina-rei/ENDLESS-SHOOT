@@ -29,7 +29,7 @@
 #endif
 #endif
 
-// static?????o??????`
+// staticメンバ変数の実体定義
 VertexShader*	Model::m_pDefVS		= nullptr;
 PixelShader*	Model::m_pDefPS		= nullptr;
 unsigned int	Model::m_shaderRef	= 0;
@@ -38,9 +38,9 @@ std::string		Model::m_errorStr	= "";
 #endif
 
 /*
-* @brief assimp????s????XMMATRIX?^????
-* @param[in] M assimp??s??
-* @return ???????s??
+* @brief assimpの行列をXMMATRIX型に変換する
+* @param[in] M assimpの行列
+* @return 変換後の行列
 */
 DirectX::XMMATRIX GetMatrixFromAssimpMatrix(aiMatrix4x4 M)
 {
@@ -53,9 +53,9 @@ DirectX::XMMATRIX GetMatrixFromAssimpMatrix(aiMatrix4x4 M)
 }
 
 /*
-* @brief ?f?t?H???g??V?F?[?_?[????
-* @param[out] vs ???_?V?F?[?_?[?i?[??
-* @param[out] ps ?s?N?Z???V?F?[?_?[?i?[??
+* @brief デフォルトのシェーダーを作成する
+* @param[out] vs 頂点シェーダーへのポインタ
+* @param[out] ps ピクセルシェーダーへのポインタ
 */
 void MakeModelDefaultShader(VertexShader** vs, PixelShader** ps)
 {
@@ -112,7 +112,7 @@ Model::Model()
 	, m_blendTotalTime(0.0f)
 	, m_parametricBlend(0.0f)
 {
-	// ?f?t?H???g?V?F?[?_?[??K?p
+	// デフォルトシェーダーの適用
 	if (m_shaderRef == 0)
 	{
 		MakeModelDefaultShader(&m_pDefVS, &m_pDefPS);
@@ -123,7 +123,7 @@ Model::Model()
 }
 
 /*
-* @brief ?f?X?g???N?^
+* @brief デストラクタ
 */
 Model::~Model()
 {
@@ -137,7 +137,7 @@ Model::~Model()
 }
 
 /*
-* @brief ?????f?[?^??
+* @brief 読み込みデータの解放
 */
 void Model::Reset()
 {
@@ -157,7 +157,7 @@ void Model::Reset()
 }
 
 /*
-* @brief ???_?V?F?[?_?[???
+* @brief 頂点シェーダーのセット
 */
 void Model::SetVertexShader(VertexShader* vs)
 {
@@ -165,7 +165,7 @@ void Model::SetVertexShader(VertexShader* vs)
 }
 
 /*
-* @brief ?s?N?Z???V?F?[?_?[???
+* @brief ピクセルシェーダーのセット
 */
 void Model::SetPixelShader(PixelShader* ps)
 {
@@ -173,11 +173,11 @@ void Model::SetPixelShader(PixelShader* ps)
 }
 
 /*
-* @brief ???f???f?[?^??????
-* @param[in] file ????????f???t?@?C?????p?X
-* @param[in] scale ???f????T?C?Y??X
-* @param[in] flip ???]???
-* @return ?????????
+* @brief モデルデータの読み込み
+* @param[in] file 読み込むファイルパス
+* @param[in] scale モデルのサイズ倍率
+* @param[in] flip 反転設定
+* @return 読み込み成功でtrue
 */
 bool Model::Load(const char* file, float scale, Flip flip)
 {
@@ -186,14 +186,14 @@ bool Model::Load(const char* file, float scale, Flip flip)
 #endif
 	Reset();
 
-	// assimp????
+	// assimp初期化
 	Assimp::Importer importer;
 	int flag = 0;
 	flag |= aiProcess_Triangulate;
 	flag |= aiProcess_FlipUVs;
 	//flag |= aiProcess_MakeLeftHanded;
 
-	// assimp???????
+	// assimpファイル読み込み
 	const aiScene* pScene = importer.ReadFile(file, flag);
 	if (!pScene) {
 #ifdef _DEBUG
@@ -202,11 +202,11 @@ bool Model::Load(const char* file, float scale, Flip flip)
 		return false;
 	}
 
-	// ????????????????
+	// 読み込み設定を保存
 	m_loadScale = scale;
 	m_loadFlip = flip;
 
-	// ?f?B???N?g?????????
+	// ディレクトリパスの取得
 	std::string directory = file;
 	auto strIt = directory.begin();
 	while (strIt != directory.end()) {
@@ -216,31 +216,30 @@ bool Model::Load(const char* file, float scale, Flip flip)
 	}
 	directory = directory.substr(0, directory.find_last_of('\\') + 1);
 
-	// ?m?[?h???
+	// ノード作成
 	MakeBoneNodes(pScene);
-	// ???b?V????
+	// メッシュ作成
 	MakeMesh(pScene, scale, flip);
-	// ?}?e???A?????
+	// マテリアル作成
 	MakeMaterial(pScene, directory);
 
 	return true;
 }
 
 /*
-* @brief ?`??
-* @param[in] meshNo ?`???郁?b?V???A-1??S???\??
-* @param[in] func ???b?V???`???R?[???o?b?N
+* @brief 描画
+* @param[in] meshNo 描画するメッシュ番号、-1で全描画
 */
 void Model::Draw(int meshNo)
 {
-	// ?V?F?[?_?[???
+	// シェーダーのバインド
 	m_pVS->Bind();
 	m_pPS->Bind();
 
-	// ?e?N?X?`?????????
+	// テクスチャの自動設定フラグ
 	bool isAutoTexture = (meshNo == -1);
 
-	// ?`?????
+	// 描画ループ数
 	size_t drawNum = m_meshes.size();
 	if (meshNo != -1)
 		drawNum = meshNo + 1;
@@ -248,7 +247,7 @@ void Model::Draw(int meshNo)
 		meshNo = 0;
 
 
-	// ?`??
+	// 描画ループ
 	for (UINT i = meshNo; i < drawNum; ++i)
 	{
 		if (isAutoTexture) {
@@ -259,9 +258,9 @@ void Model::Draw(int meshNo)
 }
 
 /*
-* @brief ???b?V???????擾
-* @param[in] index ???b?V?????
-* @return ?Y?????b?V??????
+* @brief メッシュ情報の取得
+* @param[in] index メッシュ番号
+* @return 該当するメッシュ情報
 */
 const Model::Mesh* Model::GetMesh(unsigned int index)
 {
@@ -273,7 +272,7 @@ const Model::Mesh* Model::GetMesh(unsigned int index)
 }
 
 /*
-* @brief ???b?V?????擾
+* @brief メッシュ数の取得
 */
 uint32_t Model::GetMeshNum()
 {
@@ -281,9 +280,9 @@ uint32_t Model::GetMeshNum()
 }
 
 /*
-* @brief ?}?e???A???????擾
-* @param[in] index ?}?e???A?????
-* @return ?Y???}?e???A??????
+* @brief マテリアル情報の取得
+* @param[in] index マテリアル番号
+* @return 該当するマテリアル情報
 */
 const Model::Material* Model::GetMaterial(unsigned int index)
 {
@@ -295,7 +294,7 @@ const Model::Material* Model::GetMaterial(unsigned int index)
 }
 
 /*
-* @brief ?}?e???A?????擾
+* @brief マテリアル数の取得
 */
 uint32_t Model::GetMaterialNum()
 {
@@ -303,9 +302,9 @@ uint32_t Model::GetMaterialNum()
 }
 
 /*
-* @brief ?A?j???[?V???????????s???擾
-* @param[in] index ?{?[?????
-* @return ?Y???{?[???????s??
+* @brief アニメーション姿勢行列の取得
+* @param[in] index ボーン番号
+* @return 該当するボーンの行列
 */
 DirectX::XMMATRIX Model::GetBone(NodeIndex index)
 {
@@ -317,9 +316,9 @@ DirectX::XMMATRIX Model::GetBone(NodeIndex index)
 }
 
 /*
-* @brief ?A?j???[?V?????????擾
-* @param[in] no ?A?j?????
-* @return ?Y???A?j???[?V????????
+* @brief アニメーション情報の取得
+* @param[in] no アニメーション番号
+* @return 該当するアニメーション情報
 */
 const Model::Animation* Model::GetAnimation(AnimeNo no)
 {
@@ -332,9 +331,9 @@ const Model::Animation* Model::GetAnimation(AnimeNo no)
 
 
 /*
-* @brief ?A?j???[?V??????????
-* @param[in] file ??????A?j???[?V?????t?@?C?????p?X
-* @return ????????蓖??????A?j???[?V???????
+* @brief アニメーションの追加読み込み
+* @param[in] file 読み込むアニメーションファイルパス
+* @return 追加されたアニメーション番号
 */
 Model::AnimeNo Model::AddAnimation(const char* file)
 {
@@ -342,14 +341,14 @@ Model::AnimeNo Model::AddAnimation(const char* file)
 	m_errorStr = "";
 #endif
 
-	// assimp????
+	// assimp初期化
 	Assimp::Importer importer;
 	int flag = 0;
 	flag |= aiProcess_Triangulate;
 	flag |= aiProcess_FlipUVs;
 	if (m_loadFlip == Flip::XFlip)  flag |= aiProcess_MakeLeftHanded;
 
-	// assimp???????
+	// assimpファイル読み込み
 	const aiScene* pScene = importer.ReadFile(file, flag);
 	if (!pScene)
 	{
@@ -359,7 +358,7 @@ Model::AnimeNo Model::AddAnimation(const char* file)
 		return ANIME_NONE;
 	}
 
-	// ?A?j???[?V?????`?F?b?N
+	// アニメーションのチェック
 	if (!pScene->HasAnimations())
 	{
 #ifdef _DEBUG
@@ -368,19 +367,19 @@ Model::AnimeNo Model::AddAnimation(const char* file)
 		return ANIME_NONE;
 	}
 
-	// ?A?j???[?V?????f?[?^?m??
+	// アニメーションデータの確保
 	aiAnimation* assimpAnime = pScene->mAnimations[0];
 	m_animes.push_back(Animation());
 	Animation& anime = m_animes.back();
 
-	// ?A?j???[?V???????
+	// アニメーションの解析
 	float animeFrame = static_cast<float>(assimpAnime->mTicksPerSecond);
 	anime.totalTime = static_cast<float>(assimpAnime->mDuration )/ animeFrame;
 	anime.channels.resize(assimpAnime->mNumChannels);
 	Channels::iterator channelIt = anime.channels.begin();
 	while (channelIt != anime.channels.end())
 	{
-		// ????????`?????l??(?{?[??)???T??
+		// チャンネル名からノード(ボーン)を検索
 		uint32_t channelIdx = static_cast<uint32_t>(channelIt - anime.channels.begin());
 		aiNodeAnim* assimpChannel = assimpAnime->mChannels[channelIdx];
 		Model::Nodes::iterator nodeIt = std::find_if(m_nodes.begin(), m_nodes.end(),
@@ -394,15 +393,15 @@ Model::AnimeNo Model::AddAnimation(const char* file)
 			continue;
 		}
 
-		// ?e?L?[??l?????
+		// 各キーの値を取得
 		channelIt->index = static_cast<NodeIndex>(nodeIt - m_nodes.begin());
 		Timeline& timeline = channelIt->timeline;
 
-		// ???xXMVECTOR?^??i?[
+		// 一旦XMVECTOR型で保存
 		using XMVectorKey = std::pair<float, DirectX::XMVECTOR>;
 		using XMVectorKeys = std::map<float, DirectX::XMVECTOR>;
 		XMVectorKeys keys[3];
-		// ??u
+		// 位置
 		for (UINT i = 0; i < assimpChannel->mNumPositionKeys; ++i)
 		{
 			aiVectorKey& key = assimpChannel->mPositionKeys[i];
@@ -410,14 +409,14 @@ Model::AnimeNo Model::AddAnimation(const char* file)
 					DirectX::XMVectorSet(key.mValue.x, key.mValue.y, key.mValue.z, 0.0f)
 			));
 		}
-		// ???]
+		// 回転
 		for (UINT i = 0; i < assimpChannel->mNumRotationKeys; ++i)
 		{
 			aiQuatKey& key = assimpChannel->mRotationKeys[i];
 			keys[1].insert(XMVectorKey(static_cast<float>(key.mTime) / animeFrame,
 				DirectX::XMVectorSet(key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w)));
 		}
-		// ?g?k
+		// 拡大縮小
 		for (UINT i = 0; i < assimpChannel->mNumScalingKeys; ++i)
 		{
 			aiVectorKey& key = assimpChannel->mScalingKeys[i];
@@ -425,19 +424,19 @@ Model::AnimeNo Model::AddAnimation(const char* file)
 				DirectX::XMVectorSet(key.mValue.x, key.mValue.y, key.mValue.z, 0.0f)));
 		}
 
-		// ?e?^?C?????C???????Q??????
+		// 各タイムラインのイテレータを参照用に用意
 		XMVectorKeys::iterator it[] = {keys[0].begin(), keys[1].begin(), keys[2].begin()};
 		for (int i = 0; i < 3; ++i)
 		{
-			// ?L?[????????????????A?Q??I??
+			// キーが1つしかない場合は、参照を終了
 			if (keys[i].size() == 1)
 				++ it[i];
 		}
 
-		// ?e?v?f?????^?C?????C????????A???????????????^?C?????C?????
+		// 各要素のタイムラインを統合して、1つのタイムラインにする
 		while (it[0] != keys[0].end() && it[1] != keys[1].end() && it[2] != keys[2].end())
 		{
-			// ??????Q???u????????????????擾
+			// 一番近いキー位置の時間を取得
 			float time = anime.totalTime;
 			for (int i = 0; i < 3; ++i)
 			{
@@ -447,31 +446,31 @@ Model::AnimeNo Model::AddAnimation(const char* file)
 				}
 			}
 
-			// ??????????????l???v?Z
+			// その時間での値を計算
 			DirectX::XMVECTOR result[3];
 			for (int i = 0; i < 3; ++i)
 			{
-				// ????L?[??????????????????A????l?????
+				// 最初のキーより前の時間なら、最初の値にする
 				if (time < keys[i].begin()->first)
 				{
 					result[i] = keys[i].begin()->second;
 				}
-				// ??I?L?[??????????????????A??I??l?????
+				// 最後のキーより後の時間なら、最後の値にする
 				else if (keys[i].rbegin()->first <= time)
 				{
 					result[i] = keys[i].rbegin()->second;
 					it[i] = keys[i].end();
 				}
-				// ?L?[???m????????????????A????l???v?Z
+				// キーとキーの間なら、補間値を計算
 				else
 				{
-					// ?Q?????????????????????A????Q???L?[???i???
+					// 参照時間が今の時間より小さければ、次の参照キーに進む
 					if (it[i]->first <= time)
 					{
 						++it[i];
 					}
 
-					// ????l??v?Z
+					// 補間値の計算
 					XMVectorKeys::iterator prev = it[i];
 					--prev;
 					float rate = (time - prev->first) / (it[i]->first - prev->first);
@@ -479,7 +478,7 @@ Model::AnimeNo Model::AddAnimation(const char* file)
 				}
 			}
 
-			// ?w?莞??????????L?[?????
+			// 姿勢情報をまとめてキーにする
 			Transform transform;
 			DirectX::XMStoreFloat3(&transform.translate, result[0]);
 			DirectX::XMStoreFloat4(&transform.quaternion, result[1]);
@@ -490,58 +489,58 @@ Model::AnimeNo Model::AddAnimation(const char* file)
 		++ channelIt;
 	}
 
-	// ?A?j??????????
+	// アニメーション番号を返す
 	return static_cast<AnimeNo>(m_animes.size() - 1);
 }
 
 /*
-* @brief ?A?j???[?V??????X?V????
-* @param[in] tick ?A?j???[?V?????o?????
+* @brief アニメーションの更新処理
+* @param[in] tick アニメーションの経過時間
 */
 void Model::Step(float tick)
 {
-	// ?A?j???[?V?????????m?F
+	// アニメーションの再生確認
 	if (m_playNo == ANIME_NONE) { return; }
 
-	//--- ?A?j???[?V?????s????X?V
-	// ?p?????g???b?N
+	//--- アニメーションの姿勢の更新
+	// パラメトリック
 	if (m_playNo == PARAMETRIC_ANIME || m_blendNo == PARAMETRIC_ANIME)
 	{
 		CalcAnime(PARAMETRIC0, m_parametric[0]);
 		CalcAnime(PARAMETRIC1, m_parametric[1]);
 	}
-	// ???C???A?j??
+	// メインアニメ
 	if (m_playNo != ANIME_NONE && m_playNo != PARAMETRIC_ANIME)
 	{
 		CalcAnime(MAIN, m_playNo);
 	}
-	// ?u?????h?A?j??
+	// ブレンドアニメ
 	if (m_blendNo != ANIME_NONE && m_blendNo != PARAMETRIC_ANIME)
 	{
 		CalcAnime(BLEND, m_blendNo);
 	}
 
-	// ?A?j???[?V?????s????????????s?????X?V
+	// アニメーションの姿勢から最終的な姿勢を更新
 	CalcBones(0, DirectX::XMMatrixScaling(m_loadScale, m_loadScale, m_loadScale));
 
-	//--- ?A?j???[?V?????????X?V
-	// ???C???A?j??
+	//--- アニメーションの時間の更新
+	// メインアニメ
 	UpdateAnime(m_playNo, tick);
-	// ?u?????h?A?j??
+	// ブレンドアニメ
 	if (m_blendNo != ANIME_NONE)
 	{
 		UpdateAnime(m_blendNo, tick);
 		m_blendTime += tick;
 		if (m_blendTime <= m_blendTotalTime)
 		{
-			// ?u?????h?A?j????????I??
+			// ブレンドアニメの再生終了
 			m_blendTime = 0.0f;
 			m_blendTotalTime = 0.0f;
 			m_playNo = m_blendNo;
 			m_blendNo = ANIME_NONE;
 		}
 	}
-	// ?p?????g???b?N
+	// パラメトリック
 	if (m_playNo == PARAMETRIC_ANIME || m_blendNo == PARAMETRIC_ANIME)
 	{
 		UpdateAnime(m_parametric[0], tick);
@@ -550,28 +549,28 @@ void Model::Step(float tick)
 }
 
 /*
-* @brief ?A?j???[?V???????
-* @param[in] no ????????A?j???[?V???????
-* @param[in] loop ???[?v????t???O
-* @param[in] speed ??????x
+* @brief アニメーションの再生
+* @param[in] no 再生するアニメーション番号
+* @param[in] loop ループ再生フラグ
+* @param[in] speed 再生速度
 */
 void Model::Play(AnimeNo no, bool loop, float speed)
 {
-	// ????`?F?b?N
+	// 番号チェック
 	if (!AnimeNoCheck(no)) { return; }
 	if (m_playNo == no) { return; }
 
-	// ?????A?j???[?V???????`?F?b?N
+	// パラメトリックアニメーションのチェック
 	if (no != PARAMETRIC_ANIME)
 	{
-		// ??????????
+		// 再生情報の初期化
 		InitAnime(no);
 		m_animes[no].isLoop = loop;
 		m_animes[no].speed = speed;
 	}
 	else
 	{
-		// ?????A?j???[?V?????????????????A?j???[?V????????????
+		// パラメトリックアニメーションの場合は設定中のアニメーションを初期化する
 		InitAnime(m_parametric[0]);
 		InitAnime(m_parametric[1]);
 		m_animes[m_parametric[0]].isLoop = loop;
@@ -579,23 +578,23 @@ void Model::Play(AnimeNo no, bool loop, float speed)
 		SetParametricBlend(0.0f);
 	}
 
-	// ????A?j???[?V????????
+	// 再生アニメーション番号の設定
 	m_playNo = no;
 }
 
 /*
-* @brief ?u?????h???
-* @param[in] no ?A?j???[?V???????
-* @param[in] blendTime ?u?????h??|??????
-* @param[in] loop ???[?v?t???O
-* @param[in] speed ??????x
+* @brief ブレンド再生
+* @param[in] no アニメーション番号
+* @param[in] blendTime ブレンドに掛ける時間
+* @param[in] loop ループフラグ
+* @param[in] speed 再生速度
 */
 void Model::PlayBlend(AnimeNo no, float blendTime, bool loop, float speed)
 {
-	// ????`?F?b?N
+	// 番号チェック
 	if (!AnimeNoCheck(no)) { return; }
 
-	// ?????A?j???[?V???????`?F?b?N
+	// パラメトリックアニメーションのチェック
 	if (no != PARAMETRIC_ANIME)
 	{
 		InitAnime(no);
@@ -604,7 +603,7 @@ void Model::PlayBlend(AnimeNo no, float blendTime, bool loop, float speed)
 	}
 	else
 	{
-		// ?????A?j???[?V?????????????????A?j???[?V????????????
+		// パラメトリックアニメーションの場合は設定中のアニメーションを初期化する
 		InitAnime(m_parametric[0]);
 		InitAnime(m_parametric[1]);
 		m_animes[m_parametric[0]].isLoop = loop;
@@ -612,42 +611,42 @@ void Model::PlayBlend(AnimeNo no, float blendTime, bool loop, float speed)
 		SetParametricBlend(0.0f);
 	}
 
-	// ?u?????h????
+	// ブレンド情報の設定
 	m_blendTime = 0.0f;
 	m_blendTotalTime = blendTime;
 	m_blendNo = no;
 }
 
 /*
-* @brief ???????A?j???[?V????????
-* @param[in] no1 ???????A?j??1
-* @param[in] no2 ???????A?j??2
+* @brief パラメトリックアニメーションの設定
+* @param[in] no1 パラメトリックアニメ1
+* @param[in] no2 パラメトリックアニメ2
 */
 void Model::SetParametric(AnimeNo no1, AnimeNo no2)
 {
-	// ?A?j???[?V?????`?F?b?N
+	// 番号チェック
 	if (!AnimeNoCheck(no1)) { return; }
 	if (!AnimeNoCheck(no2)) { return; }
 
-	// ???????
+	// 番号の設定
 	m_parametric[0] = no1;
 	m_parametric[1] = no2;
 	SetParametricBlend(0.0f);
 }
 
 /*
-* @brief ?A?j???[?V????????????????
-* @param[in] blendRate ????????
+* @brief アニメーションのパラメトリックブレンド率設定
+* @param[in] blendRate ブレンド率
 */
 void Model::SetParametricBlend(float blendRate)
 {
-	// ???????A?j???????????????m?F
+	// パラメトリックアニメが設定されているか確認
 	if (m_parametric[0] == ANIME_NONE || m_parametric[1] == ANIME_NONE) return;
 
-	// ???????????
+	// ブレンド率の保存
 	m_parametricBlend = blendRate;
 
-	// ????????????A?j???[?V???????????x?????
+	// ブレンド率に合わせてアニメーションの再生速度を調整
 	Animation& anime1 = m_animes[m_parametric[0]];
 	Animation& anime2 = m_animes[m_parametric[1]];
 	float blendTotalTime = anime1.totalTime * (1.0f - m_parametricBlend) + anime2.totalTime * m_parametricBlend;
@@ -656,16 +655,16 @@ void Model::SetParametricBlend(float blendRate)
 }
 
 /*
-* @brief ?A?j???[?V???????????????X
-* @param[in] no ??X?????A?j??
-* @param[in] time ?V???????????
+* @brief アニメーションの再生時間を変更
+* @param[in] no 変更するアニメ
+* @param[in] time 新しい再生時間
 */
 void Model::SetAnimationTime(AnimeNo no, float time)
 {
-	// ?A?j???[?V?????`?F?b?N
+	// 番号チェック
 	if (!AnimeNoCheck(no)) { return; }
 
-	// ????????X
+	// 再生時間の変更
 	Animation& anime = m_animes[no];
 	anime.nowTime = time;
 	while (anime.nowTime >= anime.totalTime)
@@ -675,22 +674,22 @@ void Model::SetAnimationTime(AnimeNo no, float time)
 }
 
 /*
-* @brief ????t???O??擾
-* @param[in] no ??????A?j?????
-* @return ???????????true
+* @brief 再生フラグの取得
+* @param[in] no 確認するアニメ番号
+* @return 再生中ならtrue
 */
 bool Model::IsPlay(AnimeNo no)
 {
-	// ?A?j???[?V?????`?F?b?N
+	// 番号チェック
 	if (!AnimeNoCheck(no)) { return false; }
 
-	// ?p?????g???b?N?????????A?j??????????f
+	// パラメトリック指定の場合は内部のアニメで判定
 	if (no == PARAMETRIC_ANIME) { no = m_parametric[0]; }
 
-	// ???????????
+	// 再生が終了しているか
 	if (m_animes[no].totalTime < m_animes[no].nowTime) { return false; }
 
-	// ?????????????????????????m?F
+	// 現在再生中のものと一致しているか確認
 	if (m_playNo == no) { return true; }
 	if (m_blendNo == no) { return true; }
 	if (m_playNo == PARAMETRIC_ANIME || m_blendNo == PARAMETRIC_ANIME)
@@ -699,13 +698,13 @@ bool Model::IsPlay(AnimeNo no)
 		if (m_parametric[1] == no) { return true; }
 	}
 
-	// ?????????
+	// 再生していない
 	return false;
 }
 
 /*
-* @brief ???????????擾
-* @return ?A?j?????
+* @brief 再生中の番号を取得
+* @return アニメ番号
 */
 Model::AnimeNo Model::GetPlayNo()
 {
@@ -713,8 +712,8 @@ Model::AnimeNo Model::GetPlayNo()
 }
 
 /*
-* @brief ???????u?????h?A?j????擾
-* @return ?A?j?????
+* @brief 再生中のブレンドアニメ番号を取得
+* @return アニメ番号
 */
 Model::AnimeNo Model::GetBlendNo()
 {
@@ -725,8 +724,8 @@ Model::AnimeNo Model::GetBlendNo()
 #ifdef _DEBUG
 
 /*
-* @brief ?G???[???b?Z?[?W?擾
-* @returnn ?G???[???b?Z?[?W
+* @brief エラーメッセージの取得
+* @return エラーメッセージ
 */
 std::string Model::GetError()
 {
@@ -734,20 +733,20 @@ std::string Model::GetError()
 }
 
 /*
-* @brief ?{?[???f?o?b?O?`??
+* @brief ボーンのデバッグ描画
 */
 void Model::DrawBone()
 {
-	// ??A????
+	// 再帰関数
 	std::function<void(int, DirectX::XMFLOAT3)> FuncDrawBone =
 		[&FuncDrawBone, this](int idx, DirectX::XMFLOAT3 parent)
 	{
-		// ?e?m?[?h???????u???`??
+		// 親ノードからの線分を描画
 		DirectX::XMFLOAT3 pos;
 		DirectX::XMStoreFloat3(&pos, DirectX::XMVector3TransformCoord(DirectX::XMVectorZero(), m_nodes[idx].mat));
 		Geometory::AddLine(parent, pos, DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
 
-		// ?q?m?[?h??`??
+		// 子ノードの描画
 		auto it = m_nodes[idx].children.begin();
 		while (it != m_nodes[idx].children.end())
 		{
@@ -756,7 +755,7 @@ void Model::DrawBone()
 		}
 	};
 
-	// ?`?????s
+	// 描画の実行
 	FuncDrawBone(0, DirectX::XMFLOAT3());
 	Geometory::DrawLines();
 }
@@ -766,7 +765,7 @@ void Model::DrawBone()
 
 void Model::MakeBoneNodes(const void* ptr)
 {
-	// ??A??????Assimp??m?[?h????????????
+	// 再帰関数でAssimpのノードを変換して追加する
 	std::function<NodeIndex(aiNode*, NodeIndex, DirectX::XMMATRIX mat)> FuncAssimpNodeConvert =
 		[&FuncAssimpNodeConvert, this](aiNode* assimpNode, NodeIndex parent, DirectX::XMMATRIX mat)
 	{
@@ -779,18 +778,18 @@ void Model::MakeBoneNodes(const void* ptr)
 		}
 		else
 		{
-			// Assimp??m?[?h?????????f???N???X??i?[
+			// Assimpのノード情報から独自クラスに格納
 			Node node;
 			node.name = assimpNode->mName.data;
 			node.parent = parent;
 			node.children.resize(assimpNode->mNumChildren);
 			node.mat = mat;
 
-			// ?m?[?h???X?g????
+			// ノードリストへ追加
 			m_nodes.push_back(node);
 			NodeIndex nodeIndex = static_cast<NodeIndex>(m_nodes.size() - 1);
 
-			// ?q?v?f?????l????
+			// 子要素の再帰処理
 			for (UINT i = 0; i < assimpNode->mNumChildren; ++i)
 			{
 				m_nodes[nodeIndex].children[i] = FuncAssimpNodeConvert(
@@ -800,11 +799,11 @@ void Model::MakeBoneNodes(const void* ptr)
 		}
 	};
 
-	// ?m?[?h??
+	// ノード生成
 	m_nodes.clear();
 	FuncAssimpNodeConvert(reinterpret_cast<const aiScene*>(ptr)->mRootNode, INDEX_NONE, DirectX::XMMatrixIdentity());
 
-	// ?A?j???[?V?????v?Z?????A?m?[?h??????????f?[?^????
+	// アニメーション計算用配列、ノードの数だけデータを用意
 	Transform init = {
 		DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f),
 		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
@@ -820,12 +819,12 @@ void Model::MakeWeight(const void* ptr, int meshIdx)
 {
 	const aiScene* pScene = reinterpret_cast<const aiScene*>(ptr);
 
-	// ???b?V???????????{?[????????
+	// メッシュが持っているボーンを取得する
 	aiMesh* assimpMesh = pScene->mMeshes[meshIdx];
 	Mesh& mesh = m_meshes[meshIdx];
 	if (assimpMesh->HasBones())
 	{
-		// ???b?V????????_?????
+		// メッシュの頂点ごとのウェイト
 		struct WeightPair
 		{
 			unsigned int idx;
@@ -835,26 +834,26 @@ void Model::MakeWeight(const void* ptr, int meshIdx)
 		weights.resize(mesh.vertices.size());
 
 
-		// ???b?V??????蓖???????????{?[??????m??
+		// メッシュが影響を受けるすべてのボーン情報を確保
 		mesh.bones.resize(assimpMesh->mNumBones);
 		for (auto boneIt = mesh.bones.begin(); boneIt != mesh.bones.end(); ++boneIt)
 		{
 			UINT boneIdx = static_cast<UINT>(boneIt - mesh.bones.begin());
 			aiBone* assimpBone = assimpMesh->mBones[boneIdx];
-			// ?\?z????{?[???m?[?h?????Y???m?[?h???擾
+			// 関連するボーンとノード名から該当するノードを取得
 			std::string boneName = assimpBone->mName.data;
 			auto nodeIt = std::find_if(m_nodes.begin(), m_nodes.end(),
 				[boneName](const Node& val) {
 				return val.name == boneName;
 			});
-			// ???b?V??????蓖???????????{?[?????A?m?[?h?????????
+			// メッシュが影響を受けるすべてのボーンが、ノードに含まれているか
 			if (nodeIt == m_nodes.end())
 			{
 				boneIt->index = INDEX_NONE;
 				continue;
 			}
 
-			// ???b?V????{?[????m?[?h??R???
+			// メッシュとボーンをノードに関連付け
 			boneIt->index = static_cast<NodeIndex>(nodeIt - m_nodes.begin());
 			boneIt->invOffset = GetMatrixFromAssimpMatrix(assimpBone->mOffsetMatrix);
 			boneIt->invOffset.r[3].m128_f32[0] *= m_loadScale;
@@ -865,7 +864,7 @@ void Model::MakeWeight(const void* ptr, int meshIdx)
 				boneIt->invOffset * 
 				DirectX::XMMatrixScaling(1.f / m_loadScale, 1.f / m_loadScale, 1.f / m_loadScale);
 
-			// ?E?F?C?g????
+			// ウェイトの取得
 			UINT weightNum = assimpBone->mNumWeights;
 			for (UINT i = 0; i < weightNum; ++i)
 			{
@@ -874,7 +873,7 @@ void Model::MakeWeight(const void* ptr, int meshIdx)
 			}
 		}
 
-		// ?擾??????????_?E?F?C?g?????
+		// 取得した頂点・ウェイトの設定
 		for (int i = 0; i < weights.size(); ++i)
 		{
 			if (weights[i].size() >= 4)
@@ -882,7 +881,7 @@ void Model::MakeWeight(const void* ptr, int meshIdx)
 				std::sort(weights[i].begin(), weights[i].end(), [](WeightPair& a, WeightPair& b) {
 					return a.weight > b.weight;
 				});
-				// ?E?F?C?g??4?????????K??
+				// ウェイトが4つ以上の場合は正規化
 				float total = 0.0f;
 				for (int j = 0; j < 4; ++j)
 					total += weights[i][j].weight;
@@ -898,7 +897,7 @@ void Model::MakeWeight(const void* ptr, int meshIdx)
 	}
 	else
 	{
-		// ???b?V????e?m?[?h???g?????X?t?H?[?????????v?Z
+		// メッシュ親ノードのトランスフォーム行列から計算
 		std::string nodeName = assimpMesh->mName.data;
 		auto nodeIt = std::find_if(m_nodes.begin(), m_nodes.end(),
 			[nodeName](const Node& val) {
@@ -906,10 +905,10 @@ void Model::MakeWeight(const void* ptr, int meshIdx)
 			});
 		if (nodeIt == m_nodes.end())
 		{
-			return;	// ?{?[???f?[?^???
+			return;	// ボーンデータなし
 		}
 
-		// ???b?V???????e?m?[?h????A?T??
+		// メッシュの真の親ノードを、再帰検索
 		std::function<int(int)> FuncFindNode =
 			[&FuncFindNode, this, pScene](NodeIndex parent)
 		{
@@ -941,23 +940,23 @@ void Model::MakeWeight(const void* ptr, int meshIdx)
 
 bool Model::AnimeNoCheck(AnimeNo no)
 {
-	// ?p?????g???b?N?A?j???[?V?????m?F
+	// パラメトリックアニメーションの確認
 	if (no == PARAMETRIC_ANIME)
 	{
-		// ?p?????g???b?N??A?j???[?V??????????????????????????
+		// パラメトリック用アニメーションがどちらも設定されているか
 		return
 			m_parametric[0] != ANIME_NONE &&
 			m_parametric[1] != ANIME_NONE;
 	}
 	else
 	{
-		// ????????A?j???[?V??????????????
+		// 通常のアニメーションが範囲内か
 		return 0 <= no && no < m_animes.size();
 	}
 }
 void Model::InitAnime(AnimeNo no)
 {
-	// ?A?j??????????A?p?????g???b?N?????????????珉?????????
+	// アニメがない場合、パラメトリックが指定されている場合は処理しない
 	if (no == ANIME_NONE || no == PARAMETRIC_ANIME) { return; }
 
 	Animation& anime = m_animes[no];
@@ -971,7 +970,7 @@ void Model::CalcAnime(AnimeTransform kind, AnimeNo no)
 	Channels::iterator channelIt = anime.channels.begin();
 	while (channelIt != anime.channels.end())
 	{
-		// ???v?????{?[???????????X?L?b?v
+		// 非対象のボーンやアニメ無しはスキップ
 		Timeline& timeline = channelIt->timeline;
 		if (channelIt->index == INDEX_NONE || timeline.empty())
 		{
@@ -979,11 +978,11 @@ void Model::CalcAnime(AnimeTransform kind, AnimeNo no)
 			continue;
 		}
 
-		//--- ?Y???m?[?h??p?????A?j???[?V??????X?V
+		//--- 該当ノードの姿勢をアニメーションから更新
 		Transform& transform = m_nodeTransform[kind][channelIt->index];
 		if (timeline.size() <= 1)
 		{
-			// ?L?[???????????????l????????g?p
+			// キーが一つしかない場合はその値を使用
 			transform = channelIt->timeline[0];
 		}
 		else
@@ -991,17 +990,17 @@ void Model::CalcAnime(AnimeTransform kind, AnimeNo no)
 			Timeline::iterator startIt = timeline.begin();
 			if (anime.nowTime <= startIt->first)
 			{
-				// ???L?[???????O????????A????l???g?p
+				// 最初のキーより前なら、最初の値を使用
 				transform = startIt->second;
 			}
 			else if (timeline.rbegin()->first <= anime.nowTime)
 			{
-				// ??I?L?[????????????????A?????l???g?p
+				// 最後のキーより後なら、最後の値を使用
 				transform = timeline.rbegin()->second;
 			}
 			else
 			{
-				// ?w?????????????2???L?[?????A????????l???v?Z
+				// 指定時間を挟む2つのキーから、補間した値を計算
 				Timeline::iterator nextIt = timeline.upper_bound(anime.nowTime);
 				startIt = nextIt;
 				--startIt;
@@ -1029,9 +1028,9 @@ void Model::UpdateAnime(AnimeNo no, float tick)
 }
 void Model::CalcBones(NodeIndex index, const DirectX::XMMATRIX parent)
 {
-	//--- ?A?j???[?V?????????p?????[?^??????
+	//--- アニメーションから姿勢データを取得
 	Transform transform;
-	// ?p?????g???b?N
+	// パラメトリック
 	if (m_playNo == PARAMETRIC_ANIME || m_blendNo == PARAMETRIC_ANIME)
 	{
 		LerpTransform(&transform, m_nodeTransform[PARAMETRIC0][index], m_nodeTransform[PARAMETRIC1][index], m_parametricBlend);
@@ -1044,25 +1043,25 @@ void Model::CalcBones(NodeIndex index, const DirectX::XMMATRIX parent)
 			m_nodeTransform[BLEND][index] = transform;
 		}
 	}
-	// ?u?????h?A?j??
+	// ブレンドアニメ
 	if (m_blendNo != ANIME_NONE)
 	{
 		LerpTransform(&transform, m_nodeTransform[MAIN][index], m_nodeTransform[BLEND][index], m_blendTime / m_blendTotalTime);
 	}
 	else
 	{
-		// ???C???A?j?????
+		// メインアニメのみ
 		transform = m_nodeTransform[MAIN][index];
 	}
 
-	// ?Y???m?[?h??p???s?????v?Z
+	// 該当ノードの姿勢行列を計算
 	Node& node = m_nodes[index];
 	DirectX::XMMATRIX T = DirectX::XMMatrixTranslationFromVector(DirectX::XMLoadFloat3(&transform.translate));
 	DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&transform.quaternion));
 	DirectX::XMMATRIX S = DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat3(&transform.scale));
 	node.mat = (S * R * T) * parent;
 
-	// ?q?v?f??p?????X?V
+	// 子要素の姿勢を更新
 	Children::iterator it = node.children.begin();
 	while (it != node.children.end())
 	{

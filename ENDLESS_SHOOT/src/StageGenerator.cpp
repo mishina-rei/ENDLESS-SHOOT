@@ -46,6 +46,6 @@ void StageGenerator::Create()
 	case 10:
 		return SceneManager::GetInstance().SetScene<SceneStage12>();
 	default:
-		return SceneManager::GetInstance().SetScene<SceneGame>();
+		return SceneManager::GetInstance().SetScene<SceneStage10>();
 	}
 }

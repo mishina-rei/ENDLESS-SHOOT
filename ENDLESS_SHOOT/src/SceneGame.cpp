@@ -1,3 +1,4 @@
+#include "StageBackground.h"
 #include "SceneGame.h"
 #include "Geometory.h"
 #include "Vector.h"
@@ -24,6 +25,7 @@ void SceneGame::Init()
 	world.RegisterStructural<BoxCollider>();
 	world.RegisterStructural<Rigidbody>();
 	world.RegisterStructural<SpriteRenderer>();
+	world.RegisterStructural<SkyDome>();
 
 	GameManager::SetState(GameManager::PLAY);
 	GameManager::AdvanceStage();
@@ -43,6 +45,7 @@ void SceneGame::Init()
 		script.Bind<Clear>();
 		world.AddComponent<Script>(entity, script);
 	}
+
 
 	// BGM再生用エンティティの作成
 	{
@@ -121,15 +124,10 @@ void SceneGame::Init()
 		transform.scale = Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z);
 		world.AddComponent<Transform>(entity, transform);
 
-		BoxCollider boxCollider(Vector3(0.0f, -0.5f, 0.0f), Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z), Quaternion::Identity());
+		BoxCollider boxCollider(Vector3(0.0f, 0.0f, 0.0f), Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z), Quaternion::Identity());
 		boxCollider.isStatic = true;
 		world.AddComponent<BoxCollider>(entity, boxCollider);
 
-		Model* pModel = new Model();
-		pModel->Load("Assets/Model/box.fbx");
-		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
-		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
-		world.AddComponent<MeshRenderer>(entity, MeshRenderer(pModel));
 	}
 
 	// 落ちないようにするための壁
@@ -194,4 +192,6 @@ void SceneGame::Init()
 		boxCollider.isStatic = true;
 		world.AddComponent<BoxCollider>(entity, boxCollider);
 	}
+
+	StageBackground::Create(world);
 }

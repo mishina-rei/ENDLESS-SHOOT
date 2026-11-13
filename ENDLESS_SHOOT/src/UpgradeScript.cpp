@@ -49,20 +49,20 @@ void UpgradeScript::OnCreate()
 		candidates.push_back(i);
 	}
 
-	// ?????
+	// シャッフル
 	for (int i = 0; i < candidates.size(); ++i)
 	{
 		int j = Random::Range(i, (int)candidates.size() - 1);
 		std::swap(candidates[i], candidates[j]);
 	}
 
-	// 3???
+	// 先頭3つを選ぶ
 	for (int i = 0; i < 3; ++i)
 	{
 		upgrades[i] = (i < candidates.size()) ? candidates[i] : 0;
 	}
 
-	// ????3?????????
+	// 選ばれた3つのアップグレードを配置
 	float posY = SCREEN_HEIGHT * 0.5f;
 
 	for (int i = 0; i < 3; ++i)
@@ -98,7 +98,7 @@ void UpgradeScript::OnCreate()
 		});
 	}
 
-	// ???????
+	// カーソル用エンティティの生成
 	Push([this](ECS::World& w) {
 		this->cursorId = w.CreateEntity();
 		Transform t;
@@ -107,10 +107,10 @@ void UpgradeScript::OnCreate()
 
 		SpriteRenderer sr;
 		sr.SetTexture("Assets/Texture/white.png");
-		sr.size = Vector2{ STEP_X, 120.0f }; // ???????????
-		sr.color = Vector4(1.0f, 1.0f, 1.0f, 0.5f); // ????????
+		sr.size = Vector2{ STEP_X, 120.0f }; // カーソルのサイズ
+		sr.color = Vector4(1.0f, 1.0f, 1.0f, 0.5f); // 半透明の白
 		sr.isUI = true;
-		sr.layer = SpriteLayer::UI_Back; // ???????
+		sr.layer = SpriteLayer::UI_Back; // UIの背面に表示
 		w.AddComponent<SpriteRenderer>(this->cursorId, sr);
 	});
 
@@ -121,7 +121,7 @@ void UpgradeScript::OnCreate()
 
 void UpgradeScript::Update()
 {
-	// ??????
+	// カーソルの移動入力
 	if (IsKeyTrigger(VK_LEFT))
 	{
 		cursor--;
@@ -135,7 +135,7 @@ void UpgradeScript::Update()
 		Play(cursorSE);
 	}
 
-	// ????????
+	// カーソルの位置更新
 	auto& t = world->GetComponent<Transform>(cursorId);
 	t.position.x = START_X + STEP_X * cursor;
 

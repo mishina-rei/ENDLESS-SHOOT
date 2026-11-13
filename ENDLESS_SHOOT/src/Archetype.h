@@ -1,8 +1,6 @@
 // Archetype.h
 
 #pragma once
-
-#pragma once
 #include <unordered_map>
 #include "Signature.h"
 #include "ComponentTypeID.h"

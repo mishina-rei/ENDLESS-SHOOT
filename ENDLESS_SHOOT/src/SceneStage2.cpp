@@ -1,3 +1,5 @@
+#include "StageObstacle.h"
+#include "StageBackground.h"
 #include "SceneStage2.h"
 #include "Geometory.h"
 #include "Vector.h"
@@ -25,6 +27,7 @@ void SceneStage2::Init()
 	world.RegisterStructural<BoxCollider>();
 	world.RegisterStructural<Rigidbody>();
 	world.RegisterStructural<SpriteRenderer>();
+	world.RegisterStructural<SkyDome>();
 
 	GameManager::SetState(GameManager::PLAY);
 	GameManager::AdvanceStage();
@@ -167,65 +170,17 @@ void SceneStage2::Init()
 	// --- 障害物の追加 ---
 	// 中央の柱
 	{
-		ECS::EntityID entity = world.CreateEntity();
-		Transform transform;
-		transform.position = Vector3(0.0f, 1.0f, -5.0f);
-		transform.scale = Vector3(2.0f, 3.0f, 2.0f);
-		world.AddComponent<Transform>(entity, transform);
-
-		BoxCollider boxCollider(Vector3(0.0f, 0.0f, 0.0f), Vector3(2.0f, 3.0f, 2.0f), Quaternion::Identity());
-		boxCollider.isStatic = true;
-		world.AddComponent<BoxCollider>(entity, boxCollider);
-
-		Model* pModel = new Model();
-		pModel->Load("Assets/Model/box.fbx");
-		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
-		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
-		MeshRenderer mr(pModel);
-		mr.color = Vector4(0.6f, 0.6f, 0.7f, 1.0f);
-		world.AddComponent<MeshRenderer>(entity, mr);
+		StageObstacle::Create(world, Vector3(0.0f, 1.0f, -5.0f), Vector3(2.0f, 3.0f, 2.0f), StageObstacle::Type::Pillar);
 	}
 
 	// 左側の壁
 	{
-		ECS::EntityID entity = world.CreateEntity();
-		Transform transform;
-		transform.position = Vector3(-10.0f, 0.5f, -2.0f);
-		transform.scale = Vector3(1.0f, 2.0f, 6.0f);
-		world.AddComponent<Transform>(entity, transform);
-
-		BoxCollider boxCollider(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 2.0f, 6.0f), Quaternion::Identity());
-		boxCollider.isStatic = true;
-		world.AddComponent<BoxCollider>(entity, boxCollider);
-
-		Model* pModel = new Model();
-		pModel->Load("Assets/Model/box.fbx");
-		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
-		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
-		MeshRenderer mr(pModel);
-		mr.color = Vector4(0.6f, 0.6f, 0.7f, 1.0f);
-		world.AddComponent<MeshRenderer>(entity, mr);
+		StageObstacle::Create(world, Vector3(-10.0f, 0.5f, -2.0f), Vector3(1.0f, 2.0f, 6.0f), StageObstacle::Type::Auto);
 	}
 
 	// 右側の壁
 	{
-		ECS::EntityID entity = world.CreateEntity();
-		Transform transform;
-		transform.position = Vector3(10.0f, 0.5f, -2.0f);
-		transform.scale = Vector3(1.0f, 2.0f, 6.0f);
-		world.AddComponent<Transform>(entity, transform);
-
-		BoxCollider boxCollider(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 2.0f, 6.0f), Quaternion::Identity());
-		boxCollider.isStatic = true;
-		world.AddComponent<BoxCollider>(entity, boxCollider);
-
-		Model* pModel = new Model();
-		pModel->Load("Assets/Model/box.fbx");
-		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
-		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
-		MeshRenderer mr(pModel);
-		mr.color = Vector4(0.6f, 0.6f, 0.7f, 1.0f);
-		world.AddComponent<MeshRenderer>(entity, mr);
+		StageObstacle::Create(world, Vector3(10.0f, 0.5f, -2.0f), Vector3(1.0f, 2.0f, 6.0f), StageObstacle::Type::Auto);
 	}
 
 	// 追加の障害物 (3つ)
@@ -237,21 +192,7 @@ void SceneStage2::Init()
 
 	for (const auto& pos : extraObstacles)
 	{
-		ECS::EntityID entity = world.CreateEntity();
-		Transform transform;
-		transform.position = pos;
-		transform.scale = Vector3(1.5f, 1.5f, 1.5f);
-		world.AddComponent<Transform>(entity, transform);
-
-		BoxCollider boxCollider(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.5f, 1.5f, 1.5f), Quaternion::Identity());
-		boxCollider.isStatic = true;
-		world.AddComponent<BoxCollider>(entity, boxCollider);
-
-		Model* pModel = new Model();
-		pModel->Load("Assets/Model/box.fbx");
-		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
-		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
-		world.AddComponent<MeshRenderer>(entity, MeshRenderer(pModel));
+		StageObstacle::Create(world, pos, Vector3(1.5f, 1.5f, 1.5f), StageObstacle::Type::Auto);
 	}
 
 	// --- 床と壁（SceneGameと同様） ---
@@ -263,15 +204,10 @@ void SceneStage2::Init()
 		transform.scale = Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z);
 		world.AddComponent<Transform>(entity, transform);
 
-		BoxCollider boxCollider(Vector3(0.0f, -0.5f, 0.0f), Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z), Quaternion::Identity());
+		BoxCollider boxCollider(Vector3(0.0f, 0.0f, 0.0f), Vector3(FLOOR_SCALE_X, 1.0f, FLOOR_SCALE_Z), Quaternion::Identity());
 		boxCollider.isStatic = true;
 		world.AddComponent<BoxCollider>(entity, boxCollider);
 
-		Model* pModel = new Model();
-		pModel->Load("Assets/Model/box.fbx");
-		pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
-		pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
-		world.AddComponent<MeshRenderer>(entity, MeshRenderer(pModel));
 	}
 
 	// 落ちないようにするための壁
@@ -336,4 +272,5 @@ void SceneStage2::Init()
 		boxCollider.isStatic = true;
 		world.AddComponent<BoxCollider>(entity, boxCollider);
 	}
+	StageBackground::Create(world);
 }

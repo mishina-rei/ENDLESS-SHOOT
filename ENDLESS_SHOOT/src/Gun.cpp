@@ -10,6 +10,8 @@
 #include "Random.h"
 #include "PlayerManager.h"
 
+constexpr Vector3 OFFSET = Vector3(0.6f, -0.4f, 0.7f);
+
 Gun::Gun(ECS::EntityID _playerId):
 	cameraId(_playerId),
 	offset(),
@@ -29,7 +31,7 @@ Gun::Gun(ECS::EntityID _playerId):
 	hitMarkerAlpha(0.0f)
 {
 	// プレイヤーから銃へのオフセットを設定
-	offset = Vector3(0.6f, -0.6f, 0.0f);
+	offset = OFFSET;
 	shootSE = LoadSound("Assets/Sound/shoot/556 Single Isolated WAV.wav");
 	SetVolume(shootSE, 0.5f);
 	// リロード音
@@ -53,7 +55,7 @@ void Gun::OnCreate()
 			// MeshRendererつける
 			MeshRenderer mr;
 			mr.pModel = std::make_shared<Model>();
-			mr.pModel->Load("Assets/Model/gun/sniper_0.fbx");
+			mr.pModel->Load("Assets/Model/gun.fbx");
 			mr.pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
 			mr.pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
 			world.AddComponent<MeshRenderer>(ID, mr);
@@ -226,7 +228,6 @@ void Gun::Shoot()
 	// 弾切れ、またはリロード中なら撃てない
 	if (currentAmmo <= 0 || isReloading)
 	{
-		// TODO: 弾切れの音を鳴らすなど
 		return;
 	}
 
@@ -278,7 +279,6 @@ void Gun::Shoot()
 		// MeshRenderer (弾のモデル)
 		MeshRenderer mr;
 		mr.pModel = std::make_shared<Model>();
-		// ※適切な弾のモデルファイルがあればパスを変更してください
 		mr.pModel->Load("Assets/Model/bullet.fbx");
 		mr.pModel->SetVertexShader(ShaderList::GetVS(ShaderList::VS_WORLD));
 		mr.pModel->SetPixelShader(ShaderList::GetPS(ShaderList::PS_LAMBERT));
@@ -300,7 +300,7 @@ void Gun::Shoot()
 		bc.tag = CollisionTag::BULLET;
 		world.AddComponent<BoxCollider>(id, bc);
 
-		// Script (寿命管理など)
+		// Script (寿命管理)
 		Script script;
 		script.Bind<Bullet>(this->entityId); // 銃のIDを渡す
 		world.AddComponent<Script>(id, script);

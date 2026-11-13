@@ -242,8 +242,8 @@ void ShootingEnemy::Shoot(Vector3 targetPos)
 		// Collider
 		BoxCollider bc;
 		bc.size = Vector3(0.2f, 0.2f, 0.2f);
-		bc.isTrigger = true; // •¨—Õ“Ë‚Í‚³‚¹‚È‚¢
-		bc.tag = CollisionTag::ENEMY; // “G‚ÌUŒ‚‚Æ‚µ‚Äˆµ‚¤
+		bc.isTrigger = true;			// •¨—Õ“Ë‚Í‚³‚¹‚È‚¢
+		bc.tag = CollisionTag::ENEMY;	// “G‚ÌUŒ‚‚Æ‚µ‚Äˆµ‚¤
 		world.AddComponent<BoxCollider>(id, bc);
 
 		// Script

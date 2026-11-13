@@ -1,6 +1,8 @@
+//#include "Engine_pch.h"
+
 #include "Input.h"
 
-//--- ?O???[?o?????
+//--- グローバル変数
 BYTE g_keyTable[256];
 BYTE g_oldTable[256];
 HWND g_hWnd;
@@ -11,7 +13,7 @@ float g_mouseDeltaY = 0;
 HRESULT InitInput(HWND hWnd)
 {
 	g_hWnd = hWnd;
-	// ???????????
+	// キーボードの状態を取得
 	GetKeyboardState(g_keyTable);
 	return S_OK;
 }
@@ -20,19 +22,19 @@ void UninitInput()
 }
 void UpdateInput()
 {
-	// ?�???????X?V
+	// 古いキーボードの状態を更新
 	memcpy_s(g_oldTable, sizeof(g_oldTable), g_keyTable, sizeof(g_keyTable));
-	// ???????????
+	// 現在のキーボードの状態を取得
 	GetKeyboardState(g_keyTable);
 
-	// ???????????
+	// マウスロックの切り替え
 	if (IsKeyTrigger(VK_ESCAPE)) {
 		SetMouseLock(false);
 	}
 	if (IsKeyTrigger(VK_LBUTTON)) {
 		SetMouseLock(true);
 	}
-	// ?????
+	// マウス移動量の初期化
 	g_mouseDeltaX = 0;
 	g_mouseDeltaY = 0;
 
@@ -50,7 +52,7 @@ void UpdateInput()
 		g_mouseDeltaX = pt.x - cx;
 		g_mouseDeltaY = pt.y - cy;
 
-		// ????????????
+		// マウスカーソルを画面中央に戻す
 		POINT center = { cx, cy };
 		ClientToScreen(g_hWnd, &center);
 		SetCursorPos(center.x, center.y);
@@ -81,7 +83,7 @@ void SetMouseLock(bool lock)
 
 	if (g_isMouseLock)
 	{
-		// ?????????????????????
+		// マウスカーソルを画面中央に設定
 		if (g_hWnd) {
 			RECT rc;
 			GetClientRect(g_hWnd, &rc);
