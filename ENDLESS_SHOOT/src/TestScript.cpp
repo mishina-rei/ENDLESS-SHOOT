@@ -44,7 +44,7 @@ void TestScript::Update()
 		if (IsKeyTrigger(VK_SPACE))
 		{
 			auto& rb = GetComponent<Rigidbody>();
-			rb.velocity.y = 0.2f; // ジャンプ
+			rb.velocity.y = 12.0f; // ジャンプ
 		}
 	}
 }

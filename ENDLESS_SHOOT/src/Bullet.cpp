@@ -1,5 +1,6 @@
 #include "Bullet.h"
 #include "Defines.h"
+#include "Time.h"
 #include "Component.h"
 #include "Gun.h"
 #include "EffekseerManager.h"
@@ -7,7 +8,7 @@
 void Bullet::Update()
 {
 	// Žõ–½‚ðŒ¸‚ç‚·
-	lifeTime -= 1.0f / fFPS;
+	lifeTime -= Time::GetDeltaTime();
 	if (lifeTime <= 0.0f)
 	{
 		ECS::EntityID id = this->entityId;
@@ -37,7 +38,7 @@ void Bullet::OnCollisionEnter(ECS::EntityID other)
             {
                 auto& rb = GetComponent<Rigidbody>();
                 Vector3 vel = rb.velocity;
-                if (vel.MagnitudeSq() > 0.0001f)
+                if (vel.MagnitudeSq() > 0.36f)
                 {
                     Vector3 dir = -vel.Normalized();
                     float ry = atan2f(dir.x, dir.z);

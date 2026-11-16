@@ -9,14 +9,15 @@
 #include "GameManager.h"
 #include "PlayerManager.h"
 #include "Defines.h"
+#include "Time.h"
 
 static constexpr float HP_POS_X = 20.0f;
 static constexpr float HP_POS_Y = 30.0f;
 
 static constexpr float PLAYER_LENGTH = 1.7f;
 
-static constexpr float PLAYER_SPEED = 0.05f;
-static constexpr float PLAYER_RUN_SPEED = 0.09f;
+static constexpr float PLAYER_SPEED = 3.0f;
+static constexpr float PLAYER_RUN_SPEED = 5.4f;
 
 static constexpr float DEFALUT_HP = 10.0f;
 
@@ -131,7 +132,7 @@ void Player::Update()
 	// ダメージオーバーレイのフェードアウト
 	if (damageOverlayAlpha > 0.0f)
 	{
-		damageOverlayAlpha -= 2.0f * (1.0f / fFPS); // フェードアウト速度
+		damageOverlayAlpha -= 2.0f * Time::GetDeltaTime(); // フェードアウト速度
 		if (damageOverlayAlpha < 0.0f) damageOverlayAlpha = 0.0f;
 
 		if (damageOverlayId != 0 && world->HasComponent<SpriteRenderer>(damageOverlayId))
@@ -185,7 +186,7 @@ void Player::Update()
 		ray.direction = Vector3(0.0f, -1.0f, 0.0f);
 		ColliderSystem::RaycastHit hit;
 		if (ColliderSystem::Instance().Raycast(world, ray, &hit, 0.6f, entityId)) {
-			rb.velocity.y = 0.2f;
+			rb.velocity.y = 12.0f;
 		}
 	}
 }

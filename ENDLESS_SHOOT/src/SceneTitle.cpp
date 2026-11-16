@@ -2,12 +2,18 @@
 #include "Component.h"
 #include "TitleScript.h"
 #include "Defines.h"
+#include "StageBackground.h"
+#include "CameraSystem.h"
 
 void SceneTitle::Init()
 {
 	// 構造的コンポーネントの登録
 	world.RegisterStructural<Transform>();
 	world.RegisterStructural<SpriteRenderer>();
+	world.RegisterStructural<MeshRenderer>();
+	world.RegisterStructural<SkyDome>();
+
+	StageBackground::Create(world);
 
 	// タイトル画像の作成 (UI)
 	{
@@ -45,6 +51,16 @@ void SceneTitle::Init()
 	// 制御用スクリプトを持つエンティティの作成
 	{
 		ECS::EntityID id = world.CreateEntity();
+		Transform transform;
+		transform.position = Vector3(0.0f, 4.0f, 0.0f);
+		transform.rotation = Quaternion::FromRotation(-5.0f, 0.0f, 0.0f);
+		world.AddComponent<Transform>(id, transform);
+
+		Camera camera;
+		camera.fov = 65.0f;
+		world.AddComponent<Camera>(id, camera);
+		CameraSystem::SetCamera(id);
+
 		Script script;
 		script.Bind<TitleScript>();
 		world.AddComponent<Script>(id, script);

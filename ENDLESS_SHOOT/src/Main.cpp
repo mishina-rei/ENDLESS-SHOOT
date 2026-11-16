@@ -13,6 +13,7 @@
 #include "Audio.h"
 #include "EffekseerManager.h"
 #include "RenderSystem.h"
+#include "Time.h"
 
 HRESULT Init(HWND hWnd, UINT width, UINT height)
 {
@@ -30,6 +31,7 @@ HRESULT Init(HWND hWnd, UINT width, UINT height)
 	EffekseerManager::Init();
 	auto u = RenderSystem::Init();
 	SceneManager::GetInstance().Init<SceneTitle>();
+	Time::Reset();
 
 	return hr;
 }
@@ -48,9 +50,9 @@ void Uninit()
 
 void Update()
 {
+	Time::Update();
 	SceneManager::GetInstance().Update();
 	EffekseerManager::Update();
-
 }
 
 void Draw()
@@ -101,7 +103,7 @@ void Draw()
 
 	DirectX::XMVECTOR camPos;
 	if (camAutoSwitch) {
-		camAutoRotate += 0.01f;
+		camAutoRotate += 0.01f * Time::GetDeltaTime() * fFPS;
 	}
 	camPos = DirectX::XMVectorSet(
 		cosf(camAutoRotate) * 5.0f,

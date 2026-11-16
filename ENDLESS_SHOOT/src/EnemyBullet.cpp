@@ -1,5 +1,6 @@
 #include "EnemyBullet.h"
 #include "Defines.h"
+#include "Time.h"
 #include "Component.h"
 #include "EntityTag.h"
 #include "Player.h"
@@ -8,7 +9,7 @@
 void EnemyBullet::Update()
 {
 	// Žõ–½‚ðŒ¸‚ç‚·
-	lifeTime -= 1.0f / fFPS;
+	lifeTime -= Time::GetDeltaTime();
 	if (lifeTime <= 0.0f)
 	{
 		ECS::EntityID id = this->entityId;

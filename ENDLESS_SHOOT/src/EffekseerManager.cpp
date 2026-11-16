@@ -1,4 +1,5 @@
 #include "EffekseerManager.h"
+#include "Time.h"
 #include "DirectX.h"
 #include "CameraSystem.h"
 #include <cstdlib>
@@ -60,7 +61,7 @@ void EffekseerManager::Update()
 {
 	if (g_manager.Get())
 	{
-		g_manager->Update();
+		g_manager->Update(Time::GetDeltaTime() * 60.0f);
 	}
 }
 

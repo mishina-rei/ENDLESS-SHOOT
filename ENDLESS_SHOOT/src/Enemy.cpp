@@ -2,6 +2,7 @@
 #include "Collider.h"
 #include "Component.h"
 #include "Defines.h"
+#include "Time.h"
 #include "ColliderSystem.h"
 #include "Shockwave.h"
 #include "CameraSystem.h"
@@ -10,7 +11,7 @@
 
 static constexpr float ATTACK_RANGE = 1.8f;
 static constexpr float SPEED = 1.0f;
-static constexpr float JUMP_POWER = 0.3f;
+static constexpr float JUMP_POWER = 18.0f;
 static constexpr float ATTACK_COOLDOWN = 2.0f;
 static constexpr float SPEED_MAX = 8.0f;
 static constexpr float HP_OFFSET = 1.8f;
@@ -98,7 +99,7 @@ void Enemy::Update()
 		// プレイヤーへの方向ベクトルを計算
 		Vector3 dir = targetPos - myTrans.position;
 		float distance = dir.Magnitude();
-		float dt = 1.0f / fFPS; // デルタタイム
+		float dt = Time::GetDeltaTime(); // デルタタイム
 
 		switch (currentState)
 		{
@@ -206,7 +207,7 @@ void Enemy::Update()
 
 		case State::WAIT:
 
-			waitTimer += 1.0f / fFPS;
+			waitTimer += Time::GetDeltaTime();
 
 			if (waitTimer >= ATTACK_COOLDOWN)
 			{
@@ -248,7 +249,7 @@ void Enemy::Update()
 	// ダメージ演出 (赤く点滅)
 	if (damageTimer > 0.0f)
 	{
-		damageTimer -= 1.0f / fFPS;
+		damageTimer -= Time::GetDeltaTime();
 		if (world->HasComponent<MeshRenderer>(entityId))
 		{
 			auto& mr = world->GetComponent<MeshRenderer>(entityId);
