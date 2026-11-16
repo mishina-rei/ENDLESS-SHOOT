@@ -1,5 +1,6 @@
 #include "Shockwave.h"
 #include "Defines.h"
+#include "Time.h"
 #include "Component.h"
 #include "EntityTag.h"
 #include "Player.h"
@@ -10,7 +11,7 @@ static constexpr float DAMAGE = 0.5f;
 void Shockwave::Update()
 {
 	// 時間経過で消滅させるための寿命更新
-	lifeTime -= 1.0f / fFPS;
+	lifeTime -= Time::GetDeltaTime();
 	if (lifeTime <= 0.0f)
 	{
 		ECS::EntityID id = this->entityId;

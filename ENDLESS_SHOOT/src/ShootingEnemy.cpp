@@ -2,6 +2,7 @@
 #include "Collider.h"
 #include "Component.h"
 #include "Defines.h"
+#include "Time.h"
 #include "ColliderSystem.h"
 #include "EnemyBullet.h"
 #include "CameraSystem.h"
@@ -79,7 +80,7 @@ void ShootingEnemy::Update()
 		auto& myTrans = world->GetComponent<Transform>(entityId);
 		Vector3 dir = targetPos - myTrans.position;
 		float distance = dir.Magnitude();
-		float dt = 1.0f / fFPS;
+		float dt = Time::GetDeltaTime();
 
 		// 常にプレイヤーの方を向く
 		dir.y = 0;
@@ -160,7 +161,7 @@ void ShootingEnemy::Update()
 			break;
 		}
 
-		GetComponent<MeshRenderer>().pModel->Step(1.0f / fFPS);
+		GetComponent<MeshRenderer>().pModel->Step(Time::GetDeltaTime());
 	}
 
 	// HPバー更新
@@ -188,7 +189,7 @@ void ShootingEnemy::Update()
 	// ダメージ演出
 	if (damageTimer > 0.0f)
 	{
-		damageTimer -= 1.0f / fFPS;
+		damageTimer -= Time::GetDeltaTime();
 		if (world->HasComponent<MeshRenderer>(entityId))
 		{
 			auto& mr = world->GetComponent<MeshRenderer>(entityId);
@@ -236,7 +237,7 @@ void ShootingEnemy::Shoot(Vector3 targetPos)
 		// Rigidbody
 		Rigidbody rb;
 		rb.useGravity = false;
-		rb.velocity = dir * 0.2f; // 弾速
+		rb.velocity = dir * 12.0f; // 弾速
 		world.AddComponent<Rigidbody>(id, rb);
 
 		// Collider

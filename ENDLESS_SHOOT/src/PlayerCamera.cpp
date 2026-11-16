@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "CameraSystem.h"
 #include "Defines.h"
+#include "Time.h"
 
 static constexpr float MAX_PITCH = 89.0f;
 static constexpr float MIN_PITCH = -50.0f;
@@ -72,13 +73,13 @@ void PlayerCamera::LateUpdate()
 			// …•½•ûŒü‚Ì‘¬“x
 			float speed = Vector3(rb.velocity.x, 0.0f, rb.velocity.z).Magnitude();
 
-			if (speed > 0.01f)
+			if (speed > 0.6f)
 			{
 				bool isRunning = IsKeyPress(VK_SHIFT);
 				float bobFreq = isRunning ? 15.0f : 11.0f; // —h‚ê‚Ì‘¬‚³
 				float bobAmp  = isRunning ? 0.05f : 0.02f;  // —h‚ê‚Ì‘å‚«‚³
 
-				bobTimer += bobFreq * (1.0f / fFPS);
+				bobTimer += bobFreq * Time::GetDeltaTime();
 				targetPos.y += sinf(bobTimer) * bobAmp;
 			}
 			else

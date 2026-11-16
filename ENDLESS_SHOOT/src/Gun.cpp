@@ -1,7 +1,9 @@
 #include "Gun.h"
+#include <cmath>
 #include "Component.h"
 #include "ShaderList.h"
 #include "Defines.h"
+#include "Time.h"
 #include "Input.h"
 #include "Bullet.h"
 #include "ColliderSystem.h"
@@ -131,7 +133,7 @@ void Gun::Update()
 	// ヒットマーカーのフェードアウト処理
 	if (hitMarkerAlpha > 0.0f)
 	{
-		hitMarkerAlpha -= 2.0f * (1.0f / fFPS); // フェードアウト速度
+		hitMarkerAlpha -= 2.0f * Time::GetDeltaTime(); // フェードアウト速度
 		if (hitMarkerAlpha < 0.0f) hitMarkerAlpha = 0.0f;
 
 		if (hitMarkerId != 0 && world->HasComponent<SpriteRenderer>(hitMarkerId)) {
@@ -140,12 +142,12 @@ void Gun::Update()
 	}
 
 	// 反動の減衰 (徐々に0に戻す)
-	currentRecoil = currentRecoil * 0.85f;
+	currentRecoil = currentRecoil * std::pow(0.85f, Time::GetDeltaTime() * fFPS);
 
 	// リロード中であればタイマーを進める
 	if (isReloading)
 	{
-		reloadTimer -= 1.0f / fFPS;
+		reloadTimer -= Time::GetDeltaTime();
 		if (reloadTimer <= 0.0f)
 		{
 			// リロード完了
@@ -158,7 +160,7 @@ void Gun::Update()
 	// 発射タイマー更新
 	if (fireTimer > 0.0f)
 	{
-		fireTimer -= 1.0f / fFPS;
+		fireTimer -= Time::GetDeltaTime();
 	}
 
 	// 左クリック長押しで発射
@@ -289,9 +291,9 @@ void Gun::Shoot()
 		rb.useGravity = false; // 重力無効
 		Vector3 forward = Vector3(0, 0, 1);
 		forward = t.rotation * forward; // 向いている方向へ
-		rb.velocity = forward * 1.0f;   // 弾速
+		rb.velocity = forward * 60.0f;   // 弾速
 		Vector3 dir = (targetPos - t.position).Normalized();
-		rb.velocity = dir * 1.0f;   // 弾速
+		rb.velocity = dir * 60.0f;   // 弾速
 		world.AddComponent<Rigidbody>(id, rb);
 
 		// BoxCollider (当たり判定)

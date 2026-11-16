@@ -1,6 +1,7 @@
 #include "FlyingEnemy.h"
 #include "Component.h"
 #include "Defines.h"
+#include "Time.h"
 #include "ColliderSystem.h"
 #include "GameManager.h"
 #include "PlayerManager.h"
@@ -74,7 +75,7 @@ void FlyingEnemy::Update()
 	if (found)
 	{
 		auto& myTrans = world->GetComponent<Transform>(entityId);
-		float dt = 1.0f / fFPS;
+		float dt = Time::GetDeltaTime();
 
 		// 状態遷移 (停止と移動を繰り返す)
 		stateTimer -= dt;
@@ -123,7 +124,7 @@ void FlyingEnemy::Update()
 
 		// 上下にふわふわさせる
 		hoverTimer += dt * 2.0f;
-		myTrans.position.y += sinf(hoverTimer) * 0.005f;
+		myTrans.position.y += sinf(hoverTimer) * 0.005f * dt * fFPS;
 	}
 
 	// HPバー更新
@@ -151,7 +152,7 @@ void FlyingEnemy::Update()
 	// ダメージ演出
 	if (damageTimer > 0.0f)
 	{
-		damageTimer -= 1.0f / fFPS;
+		damageTimer -= Time::GetDeltaTime();
 		if (world->HasComponent<MeshRenderer>(entityId))
 		{
 			auto& mr = world->GetComponent<MeshRenderer>(entityId);
@@ -169,7 +170,7 @@ void FlyingEnemy::Update()
 	}
 
 	// アニメーション更新
-	GetComponent<MeshRenderer>().pModel->Step(1.0f / fFPS);
+	GetComponent<MeshRenderer>().pModel->Step(Time::GetDeltaTime());
 }
 
 void FlyingEnemy::OnCollisionEnter(ECS::EntityID other)

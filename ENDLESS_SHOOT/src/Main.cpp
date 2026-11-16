@@ -103,7 +103,7 @@ void Draw()
 
 	DirectX::XMVECTOR camPos;
 	if (camAutoSwitch) {
-		camAutoRotate += 0.01f;
+		camAutoRotate += 0.01f * Time::GetDeltaTime() * fFPS;
 	}
 	camPos = DirectX::XMVectorSet(
 		cosf(camAutoRotate) * 5.0f,
